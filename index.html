@@ -1,95 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Happy Rose Day</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rose Day</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   height: 100%;
-  background: radial-gradient(circle at top, #2b0b16, #070204);
-  overflow: hidden;
   font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #fff5f8, #ffe4ec);
+  overflow: hidden;
 }
 
-/* Canvas for petals */
-canvas {
-  position: fixed;
-  inset: 0;
-}
-
-/* Scene */
-.scene {
+/* Pages */
+.page {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #ffdbe5;
-  text-align: center;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+/* First page */
+#page1 {
+  opacity: 1;
+}
+
+#page1.hide {
+  opacity: 0;
+  transform: translateY(-40px);
+  pointer-events: none;
+}
+
+/* Second page */
+#page2 {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#page2.show {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Rose */
 .rose {
-  width: 260px;
-  filter: drop-shadow(0 0 40px rgba(255,70,110,0.65));
-  animation: breathe 4s ease-in-out infinite;
-}
-
-@keyframes breathe {
-  50% { transform: scale(1.05); }
+  width: 180px;
+  margin-bottom: 20px;
 }
 
 /* Text */
 h1 {
   font-family: 'Great Vibes', cursive;
-  font-size: 3.6rem;
-  margin: 18px 0 6px;
-  color: #ffb3c6;
+  font-size: 3.2rem;
+  color: #d6336c;
+  margin: 10px 0;
 }
 
 .question {
   font-size: 1.2rem;
-  opacity: 0.9;
+  color: #555;
 }
 
-/* YES – NOT A BUTTON */
+/* YES text */
 .yes {
-  margin-top: 32px;
+  margin-top: 30px;
   font-family: 'Great Vibes', cursive;
-  font-size: 2.8rem;
-  color: rgba(255, 90, 120, 0.85);
-  transition: 0.6s ease;
+  font-size: 2.5rem;
+  color: #e64980;
+  transition: 0.4s ease;
 }
 
 .yes:hover {
   cursor: pointer;
   letter-spacing: 2px;
-  color: #ff4d6d;
-  text-shadow: 0 0 30px rgba(255,90,130,0.9);
+  color: #c2255c;
 }
 
-/* Poem on rose */
-.poem {
-  position: absolute;
-  top: 42%;
-  width: 80%;
-  max-width: 650px;
+/* Poetry */
+.poetry {
   font-family: 'Great Vibes', cursive;
-  font-size: 2.3rem;
-  color: #8a0f2a;
+  font-size: 2.4rem;
+  color: #c2255c;
+  text-align: center;
+  line-height: 1.6;
+  padding: 20px;
   opacity: 0;
-  pointer-events: none;
-  transition: 2s ease;
-  text-shadow: 0 0 22px rgba(255,120,150,0.6);
+  transition: opacity 1.5s ease;
 }
 
-.poem.show {
+.poetry.show {
   opacity: 1;
 }
 </style>
@@ -97,142 +107,68 @@ h1 {
 
 <body>
 
-<canvas id="canvas"></canvas>
-
-<div class="scene">
-  <!-- REALISTIC MULTI-LAYER ROSE -->
+<!-- PAGE 1 -->
+<div class="page" id="page1">
+  <!-- Simple Elegant Rose -->
   <svg class="rose" viewBox="0 0 200 300">
     <defs>
-      <radialGradient id="petalGrad" cx="50%" cy="50%" r="60%">
-        <stop offset="0%" stop-color="#ff9fb5"/>
-        <stop offset="100%" stop-color="#8b0026"/>
+      <radialGradient id="petal" cx="50%" cy="50%" r="60%">
+        <stop offset="0%" stop-color="#ffccd5"/>
+        <stop offset="100%" stop-color="#e64980"/>
       </radialGradient>
     </defs>
 
     <!-- Stem -->
-    <rect x="96" y="120" width="8" height="160" fill="#145a32"/>
+    <rect x="96" y="120" width="8" height="160" fill="#3a7d44"/>
 
     <!-- Leaves -->
-    <path d="M65 200 C25 170,25 230,65 215" fill="#1e8449"/>
-    <path d="M135 220 C175 200,175 260,135 240" fill="#1e8449"/>
+    <ellipse cx="70" cy="200" rx="30" ry="15" fill="#52b788" transform="rotate(-20 70 200)"/>
+    <ellipse cx="130" cy="230" rx="30" ry="15" fill="#52b788" transform="rotate(20 130 230)"/>
 
-    <!-- Outer petals -->
-    <ellipse cx="100" cy="70" rx="60" ry="45" fill="url(#petalGrad)" opacity="0.85"/>
-    <ellipse cx="85" cy="68" rx="52" ry="40" fill="url(#petalGrad)" opacity="0.9"/>
-    <ellipse cx="115" cy="68" rx="52" ry="40" fill="url(#petalGrad)" opacity="0.9"/>
+    <!-- Petals -->
+    <ellipse cx="100" cy="70" rx="55" ry="40" fill="url(#petal)"/>
+    <ellipse cx="85" cy="70" rx="45" ry="35" fill="url(#petal)"/>
+    <ellipse cx="115" cy="70" rx="45" ry="35" fill="url(#petal)"/>
 
-    <!-- Inner spiral -->
-    <path d="M100 46
-             C84 52,80 72,100 88
-             C120 72,116 52,100 46Z"
-          fill="#ff6f91"/>
+    <!-- Inner -->
+    <path d="M100 50
+             C85 55,85 75,100 85
+             C115 75,115 55,100 50Z"
+          fill="#ff8fab"/>
   </svg>
 
   <h1>Happy Rose Day</h1>
   <div class="question">Will you accept this rose?</div>
 
-  <!-- Choice -->
-  <div class="yes" onclick="acceptYes()">Yes…</div>
+  <div class="yes" onclick="goNext()">Yes…</div>
 </div>
 
-<!-- Poem -->
-<div class="poem" id="poem"></div>
-
-<!-- Music -->
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/10/26/audio_8bfae3e5c6.mp3">
-</audio>
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+  <div class="poetry" id="poetry"></div>
+</div>
 
 <script>
-/* Canvas setup */
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-function resize() {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-}
-resize();
-addEventListener("resize", resize);
-
-let petals = [];
-let tilt = 0;
-let calm = false;
-
-/* Petal physics */
-class Petal {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.vy = Math.random() * 1.2 + 0.4;
-    this.vx = Math.random() * 0.6 - 0.3;
-    this.size = Math.random() * 10 + 10;
-    this.rot = Math.random() * Math.PI;
-  }
-
-  draw() {
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.rot);
-    ctx.shadowBlur = 25;
-    ctx.shadowColor = "rgba(255,80,120,0.85)";
-    ctx.fillStyle = "#ff4d6d";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  update() {
-    this.y += calm ? this.vy * 0.4 : this.vy;
-    this.x += (this.vx + tilt) * (calm ? 0.4 : 1);
-    this.rot += 0.02;
-  }
-}
-
-/* Gentle petal fall */
-setInterval(() => {
-  petals.push(new Petal(innerWidth / 2, innerHeight / 2 - 140));
-}, 420);
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  petals.forEach((p, i) => {
-    p.update();
-    p.draw();
-    if (p.y > canvas.height) petals.splice(i, 1);
-  });
-  requestAnimationFrame(animate);
-}
-animate();
-
-/* Gyroscope */
-window.addEventListener("deviceorientation", e => {
-  tilt = e.gamma / 40;
-});
-
-/* Poetry logic */
 const poemLines = [
-  "I waited as a rose, silent and still…",
-  "Until your yes taught me how to bloom.",
-  "Every petal fell only to reach you,",
-  "Now keep me — softly, forever."
+  "I placed a rose in your hands today,",
+  "Not just a flower, but a feeling.",
+  "If love had a shape, it would be this moment,",
+  "Quiet, soft… and choosing each other."
 ];
 
-let index = 0;
+let line = 0;
 
-function acceptYes() {
-  calm = true;
-  document.getElementById("music").play();
+function goNext() {
+  document.getElementById("page1").classList.add("hide");
+  document.getElementById("page2").classList.add("show");
 
-  const poem = document.getElementById("poem");
-  poem.classList.add("show");
-  poem.innerHTML = "";
+  const poetry = document.getElementById("poetry");
+  poetry.classList.add("show");
 
   const interval = setInterval(() => {
-    if (index < poemLines.length) {
-      poem.innerHTML += poemLines[index] + "<br>";
-      index++;
+    if (line < poemLines.length) {
+      poetry.innerHTML += poemLines[line] + "<br>";
+      line++;
     } else {
       clearInterval(interval);
     }

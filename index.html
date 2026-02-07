@@ -1,169 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Happy Rose Day ❤️</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Rose Day 💖</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+  --pink: #ff4d6d;
+  --deep: #c9184a;
+  --bg1: #1a0f1c;
+  --bg2: #3a0f2d;
+}
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
 }
 
 body {
   height: 100vh;
-  background: radial-gradient(circle at top, #ffdde1, #ee9ca7);
+  background: radial-gradient(circle at top, var(--bg2), var(--bg1));
   overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+  perspective: 1200px;
+}
+
+/* Ambient particles */
+.petal {
+  position: absolute;
+  font-size: 22px;
+  animation: fall linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  from {
+    transform: translateY(-10vh) translateZ(0) rotate(0deg);
+    opacity: 0;
+  }
+  20% { opacity: 1; }
+  to {
+    transform: translateY(110vh) translateZ(200px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* 3D Card */
+.scene {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Floating hearts */
-.heart {
-  position: absolute;
-  color: rgba(255, 0, 80, 0.5);
-  animation: floatUp 8s linear infinite;
-}
-
-@keyframes floatUp {
-  0% {
-    transform: translateY(100vh) scale(0.5);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-10vh) scale(1.2);
-    opacity: 0;
-  }
-}
-
-/* Main card */
 .card {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
+  width: 360px;
   padding: 40px;
-  border-radius: 25px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  animation: pop 1.5s ease;
-  max-width: 350px;
+  border-radius: 25px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.15),
+    rgba(255,255,255,0.05)
+  );
+  backdrop-filter: blur(18px);
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.6),
+    inset 0 0 40px rgba(255,255,255,0.15);
+  transform-style: preserve-3d;
+  transition: transform 0.1s;
 }
 
-@keyframes pop {
-  0% {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 25px;
+  box-shadow: 0 0 60px rgba(255,77,109,0.4);
+  opacity: 0;
+  transition: 0.5s;
+}
+
+.card:hover::after {
+  opacity: 1;
 }
 
 h1 {
   font-family: 'Great Vibes', cursive;
-  font-size: 3rem;
-  color: #c9184a;
-  animation: heartbeat 2s infinite;
+  font-size: 3.2rem;
+  color: #ffccd5;
+  transform: translateZ(40px);
+  animation: glow 3s ease-in-out infinite;
 }
 
-@keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-p {
-  margin-top: 15px;
-  font-size: 1.1rem;
-  color: #5a0f2e;
+@keyframes glow {
+  0%,100% { text-shadow: 0 0 10px var(--pink); }
+  50% { text-shadow: 0 0 25px var(--deep); }
 }
 
 .rose {
-  font-size: 4rem;
-  margin: 20px 0;
-  animation: sway 3s ease-in-out infinite;
+  font-size: 4.5rem;
+  margin: 25px 0;
+  transform: translateZ(60px) rotate(-5deg);
+  animation: float 4s ease-in-out infinite;
 }
 
-@keyframes sway {
-  0% { transform: rotate(0deg); }
-  50% { transform: rotate(10deg); }
-  100% { transform: rotate(0deg); }
+@keyframes float {
+  0%,100% { transform: translateZ(60px) translateY(0); }
+  50% { transform: translateZ(80px) translateY(-10px); }
+}
+
+p {
+  color: #ffe5ec;
+  transform: translateZ(30px);
 }
 
 button {
   margin-top: 25px;
-  padding: 12px 25px;
+  padding: 12px 28px;
   font-size: 1rem;
   border: none;
   border-radius: 30px;
-  background: linear-gradient(135deg, #ff4d6d, #c9184a);
+  background: linear-gradient(135deg, var(--pink), var(--deep));
   color: white;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  transition: transform 0.3s;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+  transform: translateZ(50px);
 }
 
-button:hover {
-  transform: scale(1.1);
-}
-
-.hidden-msg {
+.hidden {
   margin-top: 20px;
   font-size: 1.2rem;
-  color: #800f2f;
-  display: none;
-  animation: fadeIn 1.5s ease forwards;
+  color: #ffd6e0;
+  opacity: 0;
+  transform: translateZ(60px);
+  transition: 1s;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.hidden.show {
+  opacity: 1;
+}
+
+/* Mobile */
+@media (max-width: 500px) {
+  .card { width: 90%; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h1>Happy Rose Day</h1>
-  <div class="rose">🌹</div>
-  <p>A rose for the one who makes life beautiful 💖</p>
-  <button onclick="showMessage()">For You</button>
-  <div class="hidden-msg" id="msg">
-    You are the reason every day feels special 🌸<br/>
-    Keep smiling ❤️
+<div class="scene">
+  <div class="card" id="card">
+    <h1>Happy Rose Day</h1>
+    <div class="rose">🌹</div>
+    <p>For the one who adds color to my world 💖</p>
+    <button onclick="reveal()">For You</button>
+    <div class="hidden" id="msg">
+      Every rose reminds me of you 🌸<br>
+      Stay magical ❤️
+    </div>
   </div>
 </div>
 
 <script>
-// Floating hearts
-function createHeart() {
-  const heart = document.createElement('div');
-  heart.classList.add('heart');
-  heart.innerHTML = '❤️';
-  heart.style.left = Math.random() * 100 + 'vw';
-  heart.style.fontSize = Math.random() * 20 + 15 + 'px';
-  heart.style.animationDuration = Math.random() * 3 + 5 + 's';
-  document.body.appendChild(heart);
+// 3D tilt
+const card = document.getElementById('card');
 
-  setTimeout(() => {
-    heart.remove();
-  }, 8000);
+document.addEventListener('mousemove', (e) => {
+  const x = (window.innerWidth / 2 - e.clientX) / 25;
+  const y = (window.innerHeight / 2 - e.clientY) / 25;
+  card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+});
+
+document.addEventListener('mouseleave', () => {
+  card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+});
+
+// Reveal text
+function reveal() {
+  document.getElementById('msg').classList.add('show');
 }
 
-setInterval(createHeart, 300);
-
-function showMessage() {
-  document.getElementById('msg').style.display = 'block';
+// Falling petals
+function createPetal() {
+  const petal = document.createElement('div');
+  petal.className = 'petal';
+  petal.innerHTML = '🌸';
+  petal.style.left = Math.random() * 100 + 'vw';
+  petal.style.animationDuration = Math.random() * 5 + 5 + 's';
+  petal.style.fontSize = Math.random() * 20 + 14 + 'px';
+  document.body.appendChild(petal);
+  setTimeout(() => petal.remove(), 10000);
 }
+
+setInterval(createPetal, 300);
 </script>
 
 </body>

@@ -11,79 +11,46 @@
 body {
   margin: 0;
   height: 100vh;
-  background: radial-gradient(circle at top, #ffdde1, #c9184a);
+  background: radial-gradient(circle at top, #2a0a16, #0a0306);
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: #ffe5ec;
+  pointer-events: none;
 }
 
-/* Scene */
-.scene {
-  position: relative;
-  width: 400px;
-  height: 520px;
-  text-align: center;
-}
-
-/* Bouquet */
-.bouquet {
-  position: relative;
-  height: 320px;
-  margin-top: 40px;
-}
-
-.rose {
-  position: absolute;
-  font-size: 70px;
-  bottom: 0;
-  opacity: 0;
-  transform: scale(0.3) translateY(40px);
-  animation: bloom 1.8s ease forwards;
-}
-
-.rose:nth-child(1) { left: 45%; animation-delay: 0.5s; }
-.rose:nth-child(2) { left: 30%; animation-delay: 1.2s; }
-.rose:nth-child(3) { left: 60%; animation-delay: 1.9s; }
-.rose:nth-child(4) { left: 20%; animation-delay: 2.6s; }
-.rose:nth-child(5) { left: 70%; animation-delay: 3.3s; }
-
-@keyframes bloom {
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* Text */
 h1 {
   font-family: 'Great Vibes', cursive;
-  font-size: 3rem;
-  color: #7a102a;
-  margin-top: 20px;
+  font-size: 3.2rem;
+  margin-top: 30px;
+  color: #ffb3c6;
   opacity: 0;
-  animation: fadeIn 1.5s ease forwards;
-  animation-delay: 4.2s;
+  animation: fadeIn 2s ease forwards;
+  animation-delay: 2s;
 }
 
 .question {
-  margin-top: 15px;
   font-size: 1.2rem;
-  color: #5a0f2e;
+  margin-top: 10px;
   opacity: 0;
-  animation: fadeIn 1.5s ease forwards;
-  animation-delay: 5s;
+  animation: fadeIn 2s ease forwards;
+  animation-delay: 3s;
 }
 
-@keyframes fadeIn {
-  to { opacity: 1; }
-}
-
-/* Buttons */
 .buttons {
   margin-top: 20px;
-  display: none;
+  opacity: 0;
+  animation: fadeIn 2s ease forwards;
+  animation-delay: 4s;
+  pointer-events: auto;
 }
 
 button {
@@ -104,12 +71,6 @@ button {
   transform: scale(1.1);
 }
 
-.shy {
-  background: white;
-  color: #c9184a;
-}
-
-/* Final message */
 .final {
   position: absolute;
   inset: 0;
@@ -117,12 +78,13 @@ button {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.75);
   backdrop-filter: blur(10px);
-  border-radius: 20px;
+  color: #7a102a;
+  font-size: 1.2rem;
   opacity: 0;
+  transition: 2s;
   pointer-events: none;
-  transition: 1.5s;
 }
 
 .final.show {
@@ -130,97 +92,107 @@ button {
   pointer-events: auto;
 }
 
-.final h2 {
-  font-family: 'Great Vibes', cursive;
-  font-size: 2.8rem;
-  color: #c9184a;
-}
-
-.final p {
-  margin-top: 10px;
-  font-size: 1.1rem;
-  color: #5a0f2e;
-}
-
-/* Floating petals */
-.petal {
-  position: absolute;
-  font-size: 18px;
-  animation: float 8s linear infinite;
-  opacity: 0.7;
-}
-
-@keyframes float {
-  from {
-    transform: translateY(100vh) rotate(0deg);
-    opacity: 0;
-  }
-  20% { opacity: 0.7; }
-  to {
-    transform: translateY(-20vh) rotate(360deg);
-    opacity: 0;
-  }
+@keyframes fadeIn {
+  to { opacity: 1; }
 }
 </style>
 </head>
 
 <body>
 
+<canvas id="canvas"></canvas>
+
 <div class="scene">
-
-  <div class="bouquet">
-    <div class="rose">🌹</div>
-    <div class="rose">🌹</div>
-    <div class="rose">🌹</div>
-    <div class="rose">🌹</div>
-    <div class="rose">🌹</div>
-  </div>
-
+  <div style="font-size:120px;">🌹</div>
   <h1>Happy Rose Day</h1>
-  <div class="question">Will you accept this bouquet? 💐</div>
+  <div class="question">Will you accept this rose? 💌</div>
 
-  <div class="buttons" id="buttons">
-    <button class="accept" onclick="acceptBouquet()">Yes 💖</button>
-    <button class="shy">😊</button>
+  <div class="buttons">
+    <button class="accept" onclick="acceptRose()">Yes 💖</button>
+    <button>😊</button>
   </div>
-
-  <div class="final" id="final">
-    <h2>You made my day 🌹</h2>
-    <p>This bouquet is filled with smiles and love ❤️</p>
-  </div>
-
 </div>
 
-<!-- Soft background music -->
+<div class="final" id="final">
+  <h1>You are my forever rose 🌹</h1>
+  <p>This love gently falls… just for you ❤️</p>
+</div>
+
 <audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/10/26/audio_8bfae3e5c6.mp3" type="audio/mpeg">
+  <source src="https://cdn.pixabay.com/download/audio/2022/10/26/audio_8bfae3e5c6.mp3">
 </audio>
 
 <script>
-/* Show buttons after text */
-setTimeout(() => {
-  document.getElementById('buttons').style.display = 'block';
-}, 5500);
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
 
-/* Accept interaction */
-function acceptBouquet() {
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const petals = [];
+
+class Petal {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = Math.random() * 6 + 6;
+    this.speedY = Math.random() * 1.5 + 0.5;
+    this.speedX = Math.random() * 1 - 0.5;
+    this.rotation = Math.random() * Math.PI;
+  }
+
+  update() {
+    this.y += this.speedY;
+    this.x += this.speedX;
+    this.rotation += 0.02;
+  }
+
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
+    ctx.fillStyle = 'rgba(255,77,109,0.8)';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+/* Create petals from rose */
+setInterval(() => {
+  petals.push(new Petal(canvas.width / 2, canvas.height / 2 - 80));
+}, 400);
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  petals.forEach((p, i) => {
+    p.update();
+    p.draw();
+    if (p.y > canvas.height) petals.splice(i, 1);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* Accept */
+function acceptRose() {
   document.getElementById('final').classList.add('show');
   document.getElementById('music').play();
-}
 
-/* Floating petals */
-function createPetal() {
-  const petal = document.createElement('div');
-  petal.className = 'petal';
-  petal.innerHTML = '🌸';
-  petal.style.left = Math.random() * 100 + 'vw';
-  petal.style.fontSize = Math.random() * 14 + 12 + 'px';
-  petal.style.animationDuration = Math.random() * 5 + 6 + 's';
-  document.body.appendChild(petal);
-  setTimeout(() => petal.remove(), 9000);
+  // Petal shower
+  for (let i = 0; i < 40; i++) {
+    petals.push(new Petal(
+      canvas.width / 2 + Math.random() * 100 - 50,
+      canvas.height / 2
+    ));
+  }
 }
-
-setInterval(createPetal, 450);
 </script>
 
 </body>

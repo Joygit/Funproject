@@ -3,204 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Rose Day 💖</title>
+<title>Love Hurts 🌹</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap');
 
-:root {
-  --pink: #ff4d6d;
-  --deep: #c9184a;
-  --bg1: #1a0f1c;
-  --bg2: #3a0f2d;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
+  margin: 0;
   height: 100vh;
-  background: radial-gradient(circle at top, var(--bg2), var(--bg1));
-  overflow: hidden;
-  font-family: 'Poppins', sans-serif;
-  perspective: 1200px;
-}
-
-/* Ambient particles */
-.petal {
-  position: absolute;
-  font-size: 22px;
-  animation: fall linear infinite;
-  opacity: 0.8;
-}
-
-@keyframes fall {
-  from {
-    transform: translateY(-10vh) translateZ(0) rotate(0deg);
-    opacity: 0;
-  }
-  20% { opacity: 1; }
-  to {
-    transform: translateY(110vh) translateZ(200px) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* 3D Card */
-.scene {
-  width: 100%;
-  height: 100%;
+  background: radial-gradient(circle at top, #2a0a1f, #0f0610);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.card {
-  width: 360px;
-  padding: 40px;
-  text-align: center;
-  border-radius: 25px;
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,0.15),
-    rgba(255,255,255,0.05)
-  );
-  backdrop-filter: blur(18px);
-  box-shadow:
-    0 40px 80px rgba(0,0,0,0.6),
-    inset 0 0 40px rgba(255,255,255,0.15);
-  transform-style: preserve-3d;
-  transition: transform 0.1s;
-}
-
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 25px;
-  box-shadow: 0 0 60px rgba(255,77,109,0.4);
-  opacity: 0;
-  transition: 0.5s;
-}
-
-.card:hover::after {
-  opacity: 1;
-}
-
-h1 {
-  font-family: 'Great Vibes', cursive;
-  font-size: 3.2rem;
-  color: #ffccd5;
-  transform: translateZ(40px);
-  animation: glow 3s ease-in-out infinite;
-}
-
-@keyframes glow {
-  0%,100% { text-shadow: 0 0 10px var(--pink); }
-  50% { text-shadow: 0 0 25px var(--deep); }
-}
-
-.rose {
-  font-size: 4.5rem;
-  margin: 25px 0;
-  transform: translateZ(60px) rotate(-5deg);
-  animation: float 4s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%,100% { transform: translateZ(60px) translateY(0); }
-  50% { transform: translateZ(80px) translateY(-10px); }
-}
-
-p {
-  color: #ffe5ec;
-  transform: translateZ(30px);
-}
-
-button {
-  margin-top: 25px;
-  padding: 12px 28px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 30px;
-  background: linear-gradient(135deg, var(--pink), var(--deep));
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
   color: white;
-  cursor: pointer;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
-  transform: translateZ(50px);
 }
 
-.hidden {
-  margin-top: 20px;
-  font-size: 1.2rem;
-  color: #ffd6e0;
+/* Stage */
+.stage {
+  position: relative;
+  width: 360px;
+  height: 500px;
+  perspective: 1000px;
+}
+
+/* Hand */
+.hand {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(200px);
+  font-size: 120px;
+  animation: handIn 2s ease forwards;
+}
+
+@keyframes handIn {
+  to { transform: translateX(-50%) translateY(0); }
+}
+
+/* Rose */
+.rose {
+  position: absolute;
+  bottom: 180px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  font-size: 70px;
+  animation: pickRose 2s ease forwards;
+  animation-delay: 1.8s;
+}
+
+@keyframes pickRose {
+  to { transform: translateX(-50%) scale(1); }
+}
+
+/* Prick effect */
+.prick {
+  position: absolute;
+  bottom: 210px;
+  left: 53%;
+  width: 12px;
+  height: 12px;
+  background: crimson;
+  border-radius: 50%;
   opacity: 0;
-  transform: translateZ(60px);
-  transition: 1s;
+  animation: prick 1s ease forwards;
+  animation-delay: 3.8s;
 }
 
-.hidden.show {
-  opacity: 1;
+@keyframes prick {
+  0% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1.3); }
+  100% { opacity: 0; transform: scale(0); }
 }
 
-/* Mobile */
-@media (max-width: 500px) {
-  .card { width: 90%; }
+/* Shake */
+.shake {
+  animation: shake 0.4s ease-in-out;
+  animation-delay: 3.8s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-52%) rotate(-5deg); }
+  50% { transform: translateX(-48%) rotate(5deg); }
+  100% { transform: translateX(-50%) rotate(0deg); }
+}
+
+/* Bandage */
+.bandage {
+  position: absolute;
+  bottom: 190px;
+  left: 48%;
+  font-size: 40px;
+  opacity: 0;
+  animation: wrap 2s ease forwards;
+  animation-delay: 5s;
+}
+
+@keyframes wrap {
+  to { opacity: 1; }
+}
+
+/* Offer rose */
+.offer {
+  animation: offer 2s ease forwards;
+  animation-delay: 7s;
+}
+
+@keyframes offer {
+  to { transform: translateX(-50%) translateY(-60px) scale(1.1); }
+}
+
+/* Message */
+.message {
+  position: absolute;
+  top: 40px;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  animation: textIn 2s ease forwards;
+  animation-delay: 9s;
+}
+
+.message h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.6rem;
+  color: #ffb3c6;
+}
+
+.message p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #ffe5ec;
+}
+
+@keyframes textIn {
+  to { opacity: 1; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="scene">
-  <div class="card" id="card">
-    <h1>Happy Rose Day</h1>
-    <div class="rose">🌹</div>
-    <p>For the one who adds color to my world 💖</p>
-    <button onclick="reveal()">For You</button>
-    <div class="hidden" id="msg">
-      Every rose reminds me of you 🌸<br>
-      Stay magical ❤️
-    </div>
+<div class="stage">
+  <div class="message">
+    <h1>Some love hurts…</h1>
+    <p>But it is still worth giving 🌹</p>
   </div>
+
+  <div class="hand shake offer">✋</div>
+  <div class="rose offer">🌹</div>
+  <div class="prick"></div>
+  <div class="bandage">🤍</div>
 </div>
-
-<script>
-// 3D tilt
-const card = document.getElementById('card');
-
-document.addEventListener('mousemove', (e) => {
-  const x = (window.innerWidth / 2 - e.clientX) / 25;
-  const y = (window.innerHeight / 2 - e.clientY) / 25;
-  card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-});
-
-document.addEventListener('mouseleave', () => {
-  card.style.transform = 'rotateY(0deg) rotateX(0deg)';
-});
-
-// Reveal text
-function reveal() {
-  document.getElementById('msg').classList.add('show');
-}
-
-// Falling petals
-function createPetal() {
-  const petal = document.createElement('div');
-  petal.className = 'petal';
-  petal.innerHTML = '🌸';
-  petal.style.left = Math.random() * 100 + 'vw';
-  petal.style.animationDuration = Math.random() * 5 + 5 + 's';
-  petal.style.fontSize = Math.random() * 20 + 14 + 'px';
-  document.body.appendChild(petal);
-  setTimeout(() => petal.remove(), 10000);
-}
-
-setInterval(createPetal, 300);
-</script>
 
 </body>
 </html>

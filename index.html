@@ -2,82 +2,780 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Serious Question 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Networking & Azure — Study Notes</title>
 <style>
-  body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-    font-family: Arial, sans-serif;
-    overflow: hidden;
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --accent3: #00c9a7;
+    --accent4: #f7934f;
+    --text: #e8eaf6;
+    --muted: #8b90b0;
+    --code-bg: #12141e;
+    --tag-blue: #1a3a5c;
+    --tag-green: #0d3d35;
+    --tag-orange: #3d2a10;
+    --tag-purple: #2a1d4d;
   }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
 
-  h1 {
-    color: #fff;
-    margin-bottom: 30px;
+  /* SIDEBAR */
+  #sidebar {
+    position: fixed; top: 0; left: 0; width: 270px; height: 100vh;
+    background: var(--surface); border-right: 1px solid var(--border);
+    overflow-y: auto; padding: 20px 0; z-index: 100;
   }
+  #sidebar .logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+  #sidebar .logo span { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+  #sidebar .logo p { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .nav-section { padding: 8px 20px 4px; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  #sidebar a { display: block; padding: 7px 20px 7px 28px; font-size: 13px; color: var(--muted); text-decoration: none; border-left: 3px solid transparent; transition: all 0.2s; }
+  #sidebar a:hover, #sidebar a.active { color: var(--text); border-left-color: var(--accent); background: rgba(79,142,247,0.07); }
+  #sidebar a.sub { padding-left: 44px; font-size: 12px; }
 
-  button {
-    padding: 12px 25px;
-    font-size: 18px;
-    margin: 10px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-  }
+  /* MAIN */
+  #main { margin-left: 270px; padding: 40px 50px; max-width: 1100px; }
 
-  #yes {
-    background: #28a745;
-    color: white;
-  }
+  /* SECTIONS */
+  .section { margin-bottom: 70px; scroll-margin-top: 30px; }
+  h1.page-title { font-size: 32px; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+  .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 40px; }
+  h2.sec-title { font-size: 22px; font-weight: 700; color: var(--accent); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  h2.sec-title .icon { font-size: 20px; }
+  h3.sub-title { font-size: 16px; font-weight: 600; color: var(--accent3); margin: 24px 0 10px; }
+  p { color: #c5c8e0; margin-bottom: 12px; }
 
-  #no {
-    background: #dc3545;
-    color: white;
-    position: absolute;
-  }
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; }
+  .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .card-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  .card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--accent4); }
+  .card p { font-size: 13px; margin-bottom: 0; color: var(--muted); }
 
-  #celebration {
-    display: none;
-    text-align: center;
-    color: #fff;
+  /* TAGS */
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin: 2px; }
+  .tag.blue { background: var(--tag-blue); color: #7ab8ff; }
+  .tag.green { background: var(--tag-green); color: #4fd1b8; }
+  .tag.orange { background: var(--tag-orange); color: #ffb068; }
+  .tag.purple { background: var(--tag-purple); color: #b59fff; }
+
+  /* CODE / FORMULA */
+  code { background: var(--code-bg); color: var(--accent3); padding: 2px 7px; border-radius: 4px; font-size: 13px; font-family: 'Consolas', monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; overflow-x: auto; font-size: 13px; font-family: 'Consolas', monospace; color: #a8d8b8; margin: 12px 0 18px; line-height: 1.6; }
+
+  /* CALLOUT */
+  .callout { border-left: 4px solid var(--accent); background: rgba(79,142,247,0.07); border-radius: 0 8px 8px 0; padding: 12px 18px; margin: 14px 0; font-size: 13px; color: var(--muted); }
+  .callout.green { border-color: var(--accent3); background: rgba(0,201,167,0.07); }
+  .callout.orange { border-color: var(--accent4); background: rgba(247,147,79,0.07); }
+  .callout.purple { border-color: var(--accent2); background: rgba(124,92,252,0.07); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  th { background: var(--surface2); color: var(--accent); padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #c5c8e0; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* DIAGRAMS (SVG wrappers) */
+  .diagram-wrap { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; }
+  .diagram-wrap svg text { font-family: 'Segoe UI', sans-serif; }
+  .diagram-label { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+  /* IP CLASS BOX */
+  .ip-box { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .ip-cls { border-radius: 8px; padding: 14px 18px; min-width: 130px; flex: 1; }
+  .ip-cls .cls-lbl { font-size: 18px; font-weight: 800; }
+  .ip-cls .cls-range { font-size: 11px; margin-top: 4px; font-family: monospace; }
+  .ip-cls p { font-size: 12px; margin-top: 6px; color: inherit; opacity: 0.85; }
+  .cls-a { background: #112244; border: 1px solid #1e4080; color: #7ab8ff; }
+  .cls-b { background: #0d3330; border: 1px solid #1a6050; color: #4fd1b8; }
+  .cls-c { background: #2a1a00; border: 1px solid #6b4500; color: #ffb068; }
+  .cls-d { background: #2a1a3d; border: 1px solid #5a3a80; color: #c4a6ff; }
+  .cls-e { background: #1a1a1a; border: 1px solid #444; color: #999; }
+
+  /* SUBNET CALC */
+  .subnet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+  .subnet-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .subnet-card h5 { color: var(--accent4); font-size: 13px; margin-bottom: 8px; }
+  .subnet-card p { font-size: 12px; color: var(--muted); }
+
+  /* AZURE COMPONENT */
+  .az-comp { display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; }
+  .az-icon { font-size: 28px; min-width: 40px; text-align: center; }
+  .az-comp h4 { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+  .az-comp p { font-size: 13px; color: var(--muted); margin: 0; }
+
+  /* STEP */
+  .steps { counter-reset: step; }
+  .step { display: flex; gap: 16px; margin-bottom: 18px; }
+  .step-num { counter-increment: step; min-width: 32px; height: 32px; background: var(--accent2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; margin-top: 2px; }
+  .step-body h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .step-body p { font-size: 13px; color: var(--muted); margin: 0; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    #sidebar { display: none; }
+    #main { margin-left: 0; padding: 24px 18px; }
+    .card-row, .card-row.three { grid-template-columns: 1fr; }
+    .subnet-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
-
 <body>
 
-<h1>Babu will you go on a date on 14th Feb with me by being my valentine? </h1>
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="logo">
+    <span>📡 NetNotes</span>
+    <p>Networking + Azure Study Guide</p>
+  </div>
+  <div class="nav-section">Fundamentals</div>
+  <a href="#s1">🌐 What is a Network?</a>
+  <a href="#s2">🏢 Physical DC Diagram</a>
+  <a href="#s3">📦 Router — How It Works</a>
+  <a href="#s4">🔀 Switch — How It Works</a>
+  <a href="#s5">🔗 LAN</a>
+  <div class="nav-section">IP Addressing</div>
+  <a href="#s6">🔢 IP Address Basics</a>
+  <a href="#s7">🅰 IP Classes A B C D E</a>
+  <a href="#s8">🎭 Subnet Mask</a>
+  <a href="#s9">📐 CIDR Block Calculation</a>
+  <div class="nav-section">Azure Networking</div>
+  <a href="#s10">☁ Azure Virtual Network</a>
+  <a href="#s11">🧱 Azure Components</a>
+  <a href="#s12">🗺 Azure VNet Diagram</a>
+  <a href="#s13">🖥 Deploy Azure VMs</a>
+</nav>
 
-<div id="buttons">
-  <button id="yes" onclick="celebrate()">Yes 😍</button>
-  <button id="no" onmouseover="moveNo()">No 🙈</button>
-</div>
+<!-- MAIN CONTENT -->
+<div id="main">
 
-<div id="celebration">
-  <h1>🎉 Congratulations 🎉 </h1>
-  <h2> You have my Heart ❤️ now </h2>
-  <h3>Thank you for saying YES ❤️</h3>
+  <h1 class="page-title">Networking & Azure</h1>
+  <p class="page-sub">Complete study notes — from fundamentals to Azure virtual networks and VM deployment.</p>
+
+  <!-- ===== SECTION 1 ===== -->
+  <div class="section" id="s1">
+    <h2 class="sec-title"><span class="icon">🌐</span> 1. What is a Network?</h2>
+    <p>A <strong>computer network</strong> is a collection of two or more devices (computers, servers, phones, printers) connected together so they can <em>communicate</em> and <em>share resources</em> — like files, internet connections, and printers.</p>
+
+    <div class="card-row">
+      <div class="card">
+        <h4>📤 Why do we need Networks?</h4>
+        <p>Share files & data instantly · Share internet bandwidth · Centralise storage (servers) · Enable communication (email, video calls) · Run cloud & enterprise apps</p>
+      </div>
+      <div class="card">
+        <h4>🔑 Key Network Terms</h4>
+        <p><strong>Node:</strong> Any device on the network<br>
+        <strong>Host:</strong> A node that sends/receives data<br>
+        <strong>Protocol:</strong> Rules two devices agree on<br>
+        <strong>Bandwidth:</strong> Data capacity of the link</p>
+      </div>
+    </div>
+
+    <div class="callout">💡 <strong>Real-world analogy:</strong> A network is like a postal system. Devices are houses, IP addresses are postal addresses, routers are sorting centres, and data packets are letters.</div>
+  </div>
+
+  <!-- ===== SECTION 2 ===== -->
+  <div class="section" id="s2">
+    <h2 class="sec-title"><span class="icon">🏢</span> 2. Physical Data Centre — Diagram</h2>
+    <p>A <strong>data centre (DC)</strong> houses servers, networking hardware, and storage. Here's how a basic physical DC looks:</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 760 460" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <!-- Internet Cloud -->
+        <ellipse cx="380" cy="38" rx="110" ry="28" fill="#1a2040" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="380" y="43" text-anchor="middle" fill="#4f8ef7" font-size="13" font-weight="700">🌐 INTERNET</text>
+        <!-- Line to Core Router -->
+        <line x1="380" y1="66" x2="380" y2="110" stroke="#4f8ef7" stroke-width="2" stroke-dasharray="5,3"/>
+
+        <!-- Core Router -->
+        <rect x="310" y="110" width="140" height="44" rx="8" fill="#1a3050" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="380" y="128" text-anchor="middle" fill="#7ab8ff" font-size="12" font-weight="700">🔀 Core Router</text>
+        <text x="380" y="145" text-anchor="middle" fill="#5a7a9a" font-size="10">Routes traffic in/out of DC</text>
+
+        <!-- Lines from Router to 3 zones -->
+        <line x1="380" y1="154" x2="180" y2="210" stroke="#4f8ef7" stroke-width="1.5"/>
+        <line x1="380" y1="154" x2="380" y2="210" stroke="#4f8ef7" stroke-width="1.5"/>
+        <line x1="380" y1="154" x2="580" y2="210" stroke="#4f8ef7" stroke-width="1.5"/>
+
+        <!-- Switch 1 -->
+        <rect x="110" y="210" width="140" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
+        <text x="180" y="225" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">🔀 L2 Switch</text>
+        <text x="180" y="241" text-anchor="middle" fill="#336655" font-size="10">Server Zone</text>
+
+        <!-- Switch 2 -->
+        <rect x="310" y="210" width="140" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
+        <text x="380" y="225" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">🔀 L2 Switch</text>
+        <text x="380" y="241" text-anchor="middle" fill="#336655" font-size="10">Workstation Zone</text>
+
+        <!-- Switch 3 -->
+        <rect x="510" y="210" width="140" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
+        <text x="580" y="225" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">🔀 L2 Switch</text>
+        <text x="580" y="241" text-anchor="middle" fill="#336655" font-size="10">DMZ Zone</text>
+
+        <!-- Servers under Switch 1 -->
+        <line x1="150" y1="250" x2="130" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
+        <line x1="180" y1="250" x2="180" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
+        <line x1="210" y1="250" x2="220" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
+        <rect x="100" y="295" width="65" height="38" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
+        <text x="132" y="309" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 Server</text>
+        <text x="132" y="323" text-anchor="middle" fill="#4a6080" font-size="9">Web / App</text>
+        <rect x="155" y="295" width="65" height="38" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
+        <text x="187" y="309" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 Server</text>
+        <text x="187" y="323" text-anchor="middle" fill="#4a6080" font-size="9">Database</text>
+        <rect x="197" y="295" width="50" height="38" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
+
+        <!-- Workstations under Switch 2 -->
+        <line x1="345" y1="250" x2="330" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
+        <line x1="380" y1="250" x2="380" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
+        <line x1="415" y1="250" x2="430" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
+        <rect x="306" y="295" width="60" height="38" rx="5" fill="#1a1a33" stroke="#7c5cfc" stroke-width="1"/>
+        <text x="336" y="309" text-anchor="middle" fill="#b59fff" font-size="10">💻 Client</text>
+        <text x="336" y="323" text-anchor="middle" fill="#5a5080" font-size="9">Workstation</text>
+        <rect x="352" y="295" width="60" height="38" rx="5" fill="#1a1a33" stroke="#7c5cfc" stroke-width="1"/>
+        <text x="382" y="309" text-anchor="middle" fill="#b59fff" font-size="10">💻 Client</text>
+        <text x="382" y="323" text-anchor="middle" fill="#5a5080" font-size="9">Workstation</text>
+        <rect x="406" y="295" width="60" height="38" rx="5" fill="#1a1a33" stroke="#7c5cfc" stroke-width="1"/>
+        <text x="436" y="309" text-anchor="middle" fill="#b59fff" font-size="10">💻 Client</text>
+        <text x="436" y="323" text-anchor="middle" fill="#5a5080" font-size="9">Workstation</text>
+
+        <!-- Firewall / DMZ -->
+        <line x1="580" y1="250" x2="580" y2="295" stroke="#f7934f" stroke-width="1.5"/>
+        <rect x="530" y="295" width="100" height="40" rx="6" fill="#2a1500" stroke="#f7934f" stroke-width="1.5"/>
+        <text x="580" y="311" text-anchor="middle" fill="#ffb068" font-size="11" font-weight="700">🛡 Firewall</text>
+        <text x="580" y="326" text-anchor="middle" fill="#7a5030" font-size="10">DMZ / Public IP</text>
+
+        <!-- Storage area at bottom -->
+        <rect x="200" y="380" width="360" height="44" rx="8" fill="#1a1030" stroke="#7c5cfc" stroke-width="1.5"/>
+        <text x="380" y="399" text-anchor="middle" fill="#b59fff" font-size="12" font-weight="700">🗄 SAN / NAS — Shared Storage</text>
+        <text x="380" y="415" text-anchor="middle" fill="#5a4080" font-size="10">Connected to all servers via dedicated storage network</text>
+        <line x1="132" y1="333" x2="280" y2="380" stroke="#7c5cfc" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="187" y1="333" x2="380" y2="380" stroke="#7c5cfc" stroke-width="1" stroke-dasharray="4,3"/>
+      </svg>
+    </div>
+    <p class="diagram-label">▲ Typical Physical Data Centre layout — Internet → Router → Switches → Servers / Clients / Firewall → Shared Storage</p>
+
+    <div class="card-row">
+      <div class="card"><h4>🖥 Server</h4><p>Provides services — web, database, file storage, authentication. Always-on, high-spec machines in server racks.</p></div>
+      <div class="card"><h4>💻 Workstation / Client</h4><p>End-user machines that <em>consume</em> services from servers. PCs, laptops, thin clients.</p></div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 3 ===== -->
+  <div class="section" id="s3">
+    <h2 class="sec-title"><span class="icon">📦</span> 3. Router — What It Is & How It Works</h2>
+    <p>A <strong>router</strong> is a Layer-3 (Network Layer) device. Its job is to <em>decide the best path</em> for data packets to travel between different networks.</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <!-- Network A -->
+        <rect x="20" y="60" width="140" height="80" rx="10" fill="#112233" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="90" y="95" text-anchor="middle" fill="#7ab8ff" font-size="13" font-weight="700">Network A</text>
+        <text x="90" y="113" text-anchor="middle" fill="#4a6a8a" font-size="11">192.168.1.0/24</text>
+        <!-- Arrow -->
+        <line x1="160" y1="100" x2="255" y2="100" stroke="#4f8ef7" stroke-width="2"/>
+        <polygon points="255,94 270,100 255,106" fill="#4f8ef7"/>
+        <!-- Router -->
+        <rect x="270" y="60" width="160" height="80" rx="10" fill="#1a3050" stroke="#4f8ef7" stroke-width="2"/>
+        <text x="350" y="88" text-anchor="middle" fill="#7ab8ff" font-size="14" font-weight="800">🔀 ROUTER</text>
+        <text x="350" y="106" text-anchor="middle" fill="#4a7aa0" font-size="11">Routing Table</text>
+        <text x="350" y="122" text-anchor="middle" fill="#4a7aa0" font-size="10">IP → Next Hop → Interface</text>
+        <!-- Arrow -->
+        <line x1="430" y1="100" x2="525" y2="100" stroke="#00c9a7" stroke-width="2"/>
+        <polygon points="525,94 540,100 525,106" fill="#00c9a7"/>
+        <!-- Network B -->
+        <rect x="540" y="60" width="140" height="80" rx="10" fill="#0d2d22" stroke="#00c9a7" stroke-width="1.5"/>
+        <text x="610" y="95" text-anchor="middle" fill="#4fd1b8" font-size="13" font-weight="700">Network B</text>
+        <text x="610" y="113" text-anchor="middle" fill="#336655" font-size="11">10.0.0.0/16</text>
+
+        <!-- Labels -->
+        <text x="90" y="155" text-anchor="middle" fill="#4a6080" font-size="11">Packet: src 192.168.1.5</text>
+        <text x="610" y="155" text-anchor="middle" fill="#336655" font-size="11">Dest: 10.0.0.20</text>
+        <text x="350" y="160" text-anchor="middle" fill="#7ab8ff" font-size="11">Router looks up table → forwards</text>
+      </svg>
+    </div>
+
+    <h3 class="sub-title">How a Router Works — Step by Step</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Receives a Packet</h4><p>A data packet arrives on one of the router's interfaces (ports) from a device.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Reads Destination IP</h4><p>The router reads the packet's destination IP address in the Layer-3 header.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Looks Up Routing Table</h4><p>It checks its routing table — a list of networks and the next-hop IP or interface to reach them.</p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Forwards the Packet</h4><p>Sends the packet out on the correct interface toward the destination. Decrements TTL by 1.</p></div></div>
+    </div>
+    <div class="callout">💡 <strong>Key point:</strong> A router connects <em>different</em> networks. It works at IP (Layer 3). Unlike a switch, it understands IP addresses — not just MAC addresses.</div>
+  </div>
+
+  <!-- ===== SECTION 4 ===== -->
+  <div class="section" id="s4">
+    <h2 class="sec-title"><span class="icon">🔀</span> 4. Switch — What It Is & How It Works</h2>
+    <p>A <strong>network switch</strong> is a Layer-2 device that connects devices <em>within the same network</em> (same LAN). It uses <strong>MAC addresses</strong> to forward frames to the correct device only — unlike an old hub which broadcast to everyone.</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <!-- Switch box -->
+        <rect x="240" y="80" width="200" height="60" rx="10" fill="#0d2d1a" stroke="#00c9a7" stroke-width="2"/>
+        <text x="340" y="106" text-anchor="middle" fill="#4fd1b8" font-size="14" font-weight="800">🔀 SWITCH</text>
+        <text x="340" y="124" text-anchor="middle" fill="#336655" font-size="11">MAC Address Table</text>
+
+        <!-- Device A -->
+        <rect x="20" y="80" width="120" height="60" rx="8" fill="#112233" stroke="#4f8ef7" stroke-width="1.2"/>
+        <text x="80" y="106" text-anchor="middle" fill="#7ab8ff" font-size="12">💻 PC-A</text>
+        <text x="80" y="122" text-anchor="middle" fill="#4a6080" font-size="10">MAC: AA:BB:CC</text>
+        <line x1="140" y1="110" x2="240" y2="110" stroke="#4f8ef7" stroke-width="1.5"/>
+
+        <!-- Device B -->
+        <rect x="540" y="20" width="120" height="60" rx="8" fill="#112233" stroke="#4f8ef7" stroke-width="1.2"/>
+        <text x="600" y="46" text-anchor="middle" fill="#7ab8ff" font-size="12">🖥 Server</text>
+        <text x="600" y="62" text-anchor="middle" fill="#4a6080" font-size="10">MAC: DD:EE:FF</text>
+        <line x1="540" y1="50" x2="440" y2="95" stroke="#4f8ef7" stroke-width="1.5"/>
+
+        <!-- Device C -->
+        <rect x="540" y="140" width="120" height="60" rx="8" fill="#112233" stroke="#4f8ef7" stroke-width="1.2"/>
+        <text x="600" y="166" text-anchor="middle" fill="#7ab8ff" font-size="12">💻 PC-B</text>
+        <text x="600" y="182" text-anchor="middle" fill="#4a6080" font-size="10">MAC: 11:22:33</text>
+        <line x1="540" y1="170" x2="440" y2="125" stroke="#4f8ef7" stroke-width="1.5"/>
+
+        <!-- MAC table callout -->
+        <rect x="60" y="165" width="200" height="48" rx="6" fill="#0a1a0a" stroke="#336655" stroke-width="1"/>
+        <text x="160" y="182" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">MAC Table</text>
+        <text x="160" y="198" text-anchor="middle" fill="#336655" font-size="10">AA:BB:CC → Port 1</text>
+        <text x="160" y="210" text-anchor="middle" fill="#336655" font-size="10">DD:EE:FF → Port 2 | 11:22:33 → Port 3</text>
+      </svg>
+    </div>
+
+    <div class="card-row">
+      <div class="card"><h4>Hub vs Switch</h4><p><strong>Hub:</strong> Broadcasts packets to ALL ports — inefficient, security risk.<br><strong>Switch:</strong> Sends packets ONLY to the destination MAC — efficient, secure.</p></div>
+      <div class="card"><h4>L2 vs L3 Switch</h4><p><strong>L2 Switch:</strong> Works with MAC addresses only, within a single LAN.<br><strong>L3 Switch:</strong> Can also route between VLANs using IP addresses.</p></div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 5 ===== -->
+  <div class="section" id="s5">
+    <h2 class="sec-title"><span class="icon">🔗</span> 5. LAN — Local Area Network</h2>
+    <p>A <strong>LAN</strong> is a network that covers a <em>small geographic area</em> — a home, office, or building. All devices share the same network address space and can communicate without going through a router.</p>
+
+    <table>
+      <tr><th>Type</th><th>Coverage</th><th>Example</th></tr>
+      <tr><td><strong>LAN</strong></td><td>Single building / floor</td><td>Office floor with PCs and printers</td></tr>
+      <tr><td><strong>WAN</strong></td><td>Across cities / countries</td><td>Internet, corporate MPLS links</td></tr>
+      <tr><td><strong>MAN</strong></td><td>City-wide</td><td>City ISP backbone</td></tr>
+      <tr><td><strong>WLAN</strong></td><td>Wireless LAN</td><td>Wi-Fi in a cafe or home</td></tr>
+      <tr><td><strong>VLAN</strong></td><td>Logical segment of LAN</td><td>HR VLAN, Finance VLAN on same switch</td></tr>
+    </table>
+    <div class="callout green">💡 In Azure, every Virtual Network (VNet) is essentially a cloud LAN — isolated, private, with its own IP range.</div>
+  </div>
+
+  <!-- ===== SECTION 6 ===== -->
+  <div class="section" id="s6">
+    <h2 class="sec-title"><span class="icon">🔢</span> 6. IP Address — The Basics</h2>
+    <p>An <strong>IP address (Internet Protocol address)</strong> is a unique numerical label assigned to every device on a network. It's how devices find and talk to each other — like a postal address for data.</p>
+
+    <h3 class="sub-title">IPv4 Structure</h3>
+    <div class="callout">
+      An IPv4 address is <strong>32 bits</strong> long, written as 4 <em>octets</em> separated by dots.<br>
+      Example: <code>192.168.1.100</code><br>
+      In binary: <code>11000000 . 10101000 . 00000001 . 01100100</code>
+    </div>
+    <div class="card-row three">
+      <div class="card"><h4>Network Part</h4><p>Identifies which network the device is on. Like the city + street in a postal address.</p></div>
+      <div class="card"><h4>Host Part</h4><p>Identifies the specific device within that network. Like the house number.</p></div>
+      <div class="card"><h4>Broadcast</h4><p>Address where all host bits = 1. A packet sent here goes to ALL devices on the subnet.</p></div>
+    </div>
+
+    <h3 class="sub-title">Public vs Private IP</h3>
+    <table>
+      <tr><th>Type</th><th>Ranges</th><th>Usage</th></tr>
+      <tr><td><strong>Private</strong></td><td>10.0.0.0/8 · 172.16.0.0/12 · 192.168.0.0/16</td><td>Internal LAN — not routable on internet</td></tr>
+      <tr><td><strong>Public</strong></td><td>Everything else</td><td>Routable on internet, assigned by ISP</td></tr>
+      <tr><td><strong>Loopback</strong></td><td>127.0.0.1</td><td>Device talking to itself (testing)</td></tr>
+      <tr><td><strong>APIPA</strong></td><td>169.254.x.x</td><td>Auto-assigned when DHCP fails</td></tr>
+    </table>
+  </div>
+
+  <!-- ===== SECTION 7 ===== -->
+  <div class="section" id="s7">
+    <h2 class="sec-title"><span class="icon">🅰</span> 7. IP Address Classes — A, B, C, D, E</h2>
+    <p>IPv4 addresses were originally divided into <strong>classes</strong> based on the first octet. This determined the size of the network and host portions.</p>
+
+    <div class="ip-box">
+      <div class="ip-cls cls-a">
+        <div class="cls-lbl">Class A</div>
+        <div class="cls-range">1.0.0.0 – 126.255.255.255</div>
+        <p>First bit: <code>0</code><br>Network bits: 8 | Host bits: 24<br>Hosts per network: ~16 million<br>Use: Very large enterprises, ISPs</p>
+        <span class="tag blue">Default Mask: /8 → 255.0.0.0</span>
+      </div>
+      <div class="ip-cls cls-b">
+        <div class="cls-lbl">Class B</div>
+        <div class="cls-range">128.0.0.0 – 191.255.255.255</div>
+        <p>First bits: <code>10</code><br>Network bits: 16 | Host bits: 16<br>Hosts per network: ~65,000<br>Use: Medium-large organisations</p>
+        <span class="tag green">Default Mask: /16 → 255.255.0.0</span>
+      </div>
+      <div class="ip-cls cls-c">
+        <div class="cls-lbl">Class C</div>
+        <div class="cls-range">192.0.0.0 – 223.255.255.255</div>
+        <p>First bits: <code>110</code><br>Network bits: 24 | Host bits: 8<br>Hosts per network: 254<br>Use: Small offices, home networks</p>
+        <span class="tag orange">Default Mask: /24 → 255.255.255.0</span>
+      </div>
+      <div class="ip-cls cls-d">
+        <div class="cls-lbl">Class D</div>
+        <div class="cls-range">224.0.0.0 – 239.255.255.255</div>
+        <p>First bits: <code>1110</code><br>No host/network split<br>Use: Multicast groups (streaming, OSPF, routing protocols)</p>
+        <span class="tag purple">No subnet mask</span>
+      </div>
+      <div class="ip-cls cls-e">
+        <div class="cls-lbl">Class E</div>
+        <div class="cls-range">240.0.0.0 – 255.255.255.255</div>
+        <p>First bits: <code>1111</code><br>Reserved — experimental use only.<br>255.255.255.255 = limited broadcast</p>
+        <span class="tag" style="background:#222;color:#666">Reserved / Experimental</span>
+      </div>
+    </div>
+
+    <div class="callout orange">⚠️ <strong>Important:</strong> Classful addressing is largely obsolete today. Modern networking uses <strong>CIDR</strong> (Classless Inter-Domain Routing) which ignores class boundaries and uses a prefix length (e.g., /22) to define network size.</div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 90" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <rect x="10" y="20" width="125" height="50" rx="6" fill="#112244" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="72" y="43" text-anchor="middle" fill="#7ab8ff" font-size="12" font-weight="700">Class A</text>
+        <text x="72" y="60" text-anchor="middle" fill="#4a6a8a" font-size="10">1–126</text>
+
+        <rect x="145" y="20" width="125" height="50" rx="6" fill="#0d3330" stroke="#00c9a7" stroke-width="1.5"/>
+        <text x="207" y="43" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">Class B</text>
+        <text x="207" y="60" text-anchor="middle" fill="#336655" font-size="10">128–191</text>
+
+        <rect x="280" y="20" width="125" height="50" rx="6" fill="#2a1a00" stroke="#f7934f" stroke-width="1.5"/>
+        <text x="342" y="43" text-anchor="middle" fill="#ffb068" font-size="12" font-weight="700">Class C</text>
+        <text x="342" y="60" text-anchor="middle" fill="#7a5030" font-size="10">192–223</text>
+
+        <rect x="415" y="20" width="125" height="50" rx="6" fill="#2a1a3d" stroke="#7c5cfc" stroke-width="1.5"/>
+        <text x="477" y="43" text-anchor="middle" fill="#c4a6ff" font-size="12" font-weight="700">Class D</text>
+        <text x="477" y="60" text-anchor="middle" fill="#5a4080" font-size="10">224–239 Multicast</text>
+
+        <rect x="550" y="20" width="130" height="50" rx="6" fill="#1a1a1a" stroke="#444" stroke-width="1.5"/>
+        <text x="615" y="43" text-anchor="middle" fill="#666" font-size="12" font-weight="700">Class E</text>
+        <text x="615" y="60" text-anchor="middle" fill="#444" font-size="10">240–255 Reserved</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 8 ===== -->
+  <div class="section" id="s8">
+    <h2 class="sec-title"><span class="icon">🎭</span> 8. Subnet Mask</h2>
+    <p>A <strong>subnet mask</strong> tells a device which part of an IP address is the <em>network</em> and which part is the <em>host</em>. It's also 32 bits, written in dotted-decimal or as a <strong>prefix length</strong> (CIDR notation).</p>
+
+    <div class="callout">
+      <strong>Example:</strong> IP = <code>192.168.1.50</code> | Mask = <code>255.255.255.0</code> (/24)<br>
+      Binary AND of IP & Mask → Network address = <code>192.168.1.0</code><br>
+      Host range: <code>192.168.1.1</code> – <code>192.168.1.254</code> | Broadcast: <code>192.168.1.255</code>
+    </div>
+
+    <h3 class="sub-title">Subnet Mask Quick Reference</h3>
+    <table>
+      <tr><th>CIDR</th><th>Subnet Mask</th><th>Hosts Available</th><th>Networks</th></tr>
+      <tr><td>/8</td><td>255.0.0.0</td><td>16,777,214</td><td>Class A</td></tr>
+      <tr><td>/16</td><td>255.255.0.0</td><td>65,534</td><td>Class B</td></tr>
+      <tr><td>/24</td><td>255.255.255.0</td><td>254</td><td>Class C</td></tr>
+      <tr><td>/25</td><td>255.255.255.128</td><td>126</td><td>Half a C</td></tr>
+      <tr><td>/26</td><td>255.255.255.192</td><td>62</td><td>Quarter C</td></tr>
+      <tr><td>/27</td><td>255.255.255.224</td><td>30</td><td>1/8th C</td></tr>
+      <tr><td>/28</td><td>255.255.255.240</td><td>14</td><td>Azure min subnet</td></tr>
+      <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>Point-to-point links</td></tr>
+      <tr><td>/32</td><td>255.255.255.255</td><td>1 (single host)</td><td>Host route</td></tr>
+    </table>
+    <div class="callout green">💡 Formula: <strong>Usable hosts = 2^(32 - prefix) - 2</strong>. Subtract 2 because network address and broadcast are reserved.</div>
+  </div>
+
+  <!-- ===== SECTION 9 ===== -->
+  <div class="section" id="s9">
+    <h2 class="sec-title"><span class="icon">📐</span> 9. CIDR Block Calculation</h2>
+    <p><strong>CIDR</strong> (Classless Inter-Domain Routing) replaces the old class system. You specify how many bits are the "network" part using a <code>/prefix</code> after the IP.</p>
+
+    <h3 class="sub-title">Step-by-Step CIDR Calculation</h3>
+    <div class="callout purple">
+      <strong>Given:</strong> <code>10.0.0.0/22</code> — find the network address, broadcast, host range, and total hosts.
+    </div>
+    <pre>
+1. Prefix = /22 → 22 bits for network, 10 bits for hosts
+2. Total addresses = 2^(32-22) = 2^10 = 1024
+3. Usable hosts = 1024 - 2 = 1022
+
+4. Network address: 10.0.0.0
+5. Broadcast:       10.0.3.255  (last address in the block)
+6. First host:      10.0.0.1
+7. Last host:       10.0.3.254
+
+Binary check:
+10.0.0.0  = 00001010.00000000.00000000.00000000
+Mask /22  = 11111111.11111111.11111100.00000000
+                                     ^^  ← 2 host bits in 3rd octet
+Host range spans: 10.0.0.x → 10.0.3.x (4 × 256 = 1024)</pre>
+
+    <div class="subnet-grid">
+      <div class="subnet-card">
+        <h5>How many subnets can I make?</h5>
+        <p>If you borrow <strong>n</strong> bits from host part:<br>
+        <code>Subnets = 2^n</code><br>
+        E.g., from /24, borrow 2 bits → /26 → 4 subnets, each with 62 hosts</p>
+      </div>
+      <div class="subnet-card">
+        <h5>Subnet increment</h5>
+        <p>Block size = <code>256 - last non-zero mask octet</code><br>
+        /26 → mask = 255.255.255.192 → 256-192 = <strong>64</strong><br>
+        Subnets: .0, .64, .128, .192</p>
+      </div>
+      <div class="subnet-card">
+        <h5>Azure reserved addresses</h5>
+        <p>In every Azure subnet, <strong>5 IPs are reserved</strong>:<br>
+        .0 Network · .1 Gateway · .2 DNS · .3 DNS · .255 Broadcast</p>
+      </div>
+      <div class="subnet-card">
+        <h5>Quick CIDR cheat</h5>
+        <p>/24 = 256 IPs · /23 = 512 · /22 = 1024 · /21 = 2048<br>
+        Each step down doubles the addresses.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 10 ===== -->
+  <div class="section" id="s10">
+    <h2 class="sec-title"><span class="icon">☁</span> 10. Azure Virtual Network (VNet)</h2>
+    <p>An <strong>Azure Virtual Network (VNet)</strong> is the fundamental building block of your private network in Azure. It's the cloud equivalent of a traditional LAN — fully isolated, defined by an IP address space, and divided into subnets.</p>
+
+    <div class="card-row">
+      <div class="card">
+        <h4>What VNet gives you</h4>
+        <p>✅ Isolated private IP space<br>✅ Subnets to segment workloads<br>✅ Route traffic between subnets<br>✅ Connect to on-premises via VPN/ExpressRoute<br>✅ Filter traffic with NSGs and firewalls</p>
+      </div>
+      <div class="card">
+        <h4>VNet scope</h4>
+        <p>A VNet lives in one <strong>Azure Region</strong> (e.g., East US). VNets in different regions can connect via <strong>VNet Peering</strong>. A VNet belongs to one <strong>Resource Group</strong> and one <strong>Subscription</strong>.</p>
+      </div>
+    </div>
+    <div class="callout">💡 Think of VNet as the walls of your building in Azure. Everything inside can talk to each other. Nothing outside can enter unless you explicitly allow it.</div>
+  </div>
+
+  <!-- ===== SECTION 11 ===== -->
+  <div class="section" id="s11">
+    <h2 class="sec-title"><span class="icon">🧱</span> 11. Azure Network Components — Explained</h2>
+
+    <div class="az-comp">
+      <div class="az-icon">🏗</div>
+      <div><h4>Resource Group</h4><p>A logical container that holds all Azure resources for a project. Think of it as a folder. All network components (VNet, NSG, VMs) live inside it.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">🌐</div>
+      <div><h4>Virtual Network (VNet)</h4><p>The private network. You assign an address space, e.g., <code>10.0.0.0/16</code>. All subnets and VMs live within this space. Isolated from other VNets by default.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">🔲</div>
+      <div><h4>Subnet</h4><p>A subdivision of the VNet address space. Used to segment workloads (e.g., web-subnet, db-subnet). Each subnet gets a CIDR block from the VNet range. Azure reserves 5 IPs per subnet.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">🛡</div>
+      <div><h4>Network Security Group (NSG)</h4><p>A stateful firewall. Contains <em>inbound and outbound rules</em> that allow or deny traffic based on source IP, destination IP, port, and protocol. Attached to subnets or NICs.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">🌍</div>
+      <div><h4>Public IP Address</h4><p>Assigns a publicly routable IP to a VM or Load Balancer so it can be reached from the internet. Can be static or dynamic.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">🔌</div>
+      <div><h4>Network Interface Card (NIC)</h4><p>The virtual network adapter attached to a VM. Gets a private IP from the subnet. Can optionally have a public IP attached. A VM can have multiple NICs.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">📋</div>
+      <div><h4>Route Table (UDR)</h4><p>User Defined Routes let you override default Azure routing. E.g., force all traffic through a firewall VM before it leaves the subnet.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">⚖</div>
+      <div><h4>Azure Load Balancer</h4><p>Distributes inbound traffic across multiple VMs in a backend pool. Works at Layer 4 (TCP/UDP). Keeps apps available even if one VM fails.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">🔒</div>
+      <div><h4>VPN Gateway</h4><p>Connects your Azure VNet to your on-premises network or another VNet over an encrypted IPsec tunnel through the internet.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">🔁</div>
+      <div><h4>VNet Peering</h4><p>Connects two VNets (same region or cross-region) privately via Azure backbone — no internet, no VPN. Traffic stays on Microsoft's network at low latency.</p></div>
+    </div>
+    <div class="az-comp">
+      <div class="az-icon">🗣</div>
+      <div><h4>Azure DNS</h4><p>Provides name resolution for resources within a VNet using private DNS zones. VMs can resolve each other by hostname instead of IP.</p></div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 12 ===== -->
+  <div class="section" id="s12">
+    <h2 class="sec-title"><span class="icon">🗺</span> 12. Azure VNet Architecture Diagram</h2>
+    <p>Here's how a typical 3-tier Azure network with VMs, subnets, and NSGs is structured:</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 740 550" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <!-- Azure Region border -->
+        <rect x="10" y="10" width="720" height="530" rx="16" fill="none" stroke="#2e3250" stroke-width="1.5" stroke-dasharray="8,4"/>
+        <text x="30" y="34" fill="#4a5070" font-size="12" font-weight="700">☁ Azure Region: East US</text>
+
+        <!-- Resource Group -->
+        <rect x="25" y="45" width="690" height="480" rx="12" fill="#13162a" stroke="#2e3560" stroke-width="1"/>
+        <text x="45" y="68" fill="#4a60a0" font-size="11" font-weight="600">📁 Resource Group: rg-myapp-prod</text>
+
+        <!-- VNet -->
+        <rect x="40" y="80" width="660" height="430" rx="10" fill="#111830" stroke="#4f8ef7" stroke-width="2"/>
+        <text x="60" y="103" fill="#4f8ef7" font-size="12" font-weight="700">🌐 VNet: vnet-myapp   10.0.0.0/16</text>
+
+        <!-- Gateway Subnet -->
+        <rect x="55" y="115" width="180" height="70" rx="8" fill="#1a1a40" stroke="#7c5cfc" stroke-width="1.5"/>
+        <text x="145" y="138" text-anchor="middle" fill="#b59fff" font-size="11" font-weight="700">Gateway Subnet</text>
+        <text x="145" y="155" text-anchor="middle" fill="#5a4080" font-size="10">10.0.0.0/27</text>
+        <rect x="85" y="162" width="120" height="16" rx="4" fill="#2a1a4d" stroke="#7c5cfc" stroke-width="1"/>
+        <text x="145" y="174" text-anchor="middle" fill="#b59fff" font-size="10">🔒 VPN Gateway</text>
+        <!-- On-prem line -->
+        <line x1="55" y1="150" x2="10" y2="150" stroke="#7c5cfc" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="8" y="148" fill="#5a4080" font-size="9" text-anchor="end">On-Prem</text>
+
+        <!-- Web Subnet -->
+        <rect x="55" y="200" width="180" height="130" rx="8" fill="#1a2a1a" stroke="#00c9a7" stroke-width="1.5"/>
+        <text x="145" y="223" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">Web Subnet</text>
+        <text x="145" y="238" text-anchor="middle" fill="#336655" font-size="10">10.0.1.0/24</text>
+        <!-- NSG badge -->
+        <rect x="178" y="213" width="50" height="16" rx="4" fill="#0d3328" stroke="#00c9a7"/>
+        <text x="203" y="224" text-anchor="middle" fill="#4fd1b8" font-size="9" font-weight="700">NSG ✓</text>
+        <!-- VMs in web subnet -->
+        <rect x="68" y="248" width="70" height="40" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
+        <text x="103" y="264" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-web1</text>
+        <text x="103" y="278" text-anchor="middle" fill="#3a5070" font-size="9">10.0.1.4 :80</text>
+        <rect x="155" y="248" width="70" height="40" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
+        <text x="190" y="264" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-web2</text>
+        <text x="190" y="278" text-anchor="middle" fill="#3a5070" font-size="9">10.0.1.5 :80</text>
+
+        <!-- App Subnet -->
+        <rect x="280" y="200" width="180" height="130" rx="8" fill="#1a1a2a" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="370" y="223" text-anchor="middle" fill="#7ab8ff" font-size="11" font-weight="700">App Subnet</text>
+        <text x="370" y="238" text-anchor="middle" fill="#3a5070" font-size="10">10.0.2.0/24</text>
+        <rect x="403" y="213" width="50" height="16" rx="4" fill="#0d2040" stroke="#4f8ef7"/>
+        <text x="428" y="224" text-anchor="middle" fill="#7ab8ff" font-size="9" font-weight="700">NSG ✓</text>
+        <rect x="293" y="248" width="70" height="40" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
+        <text x="328" y="264" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-app1</text>
+        <text x="328" y="278" text-anchor="middle" fill="#3a5070" font-size="9">10.0.2.4 :8080</text>
+        <rect x="380" y="248" width="70" height="40" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
+        <text x="415" y="264" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-app2</text>
+        <text x="415" y="278" text-anchor="middle" fill="#3a5070" font-size="9">10.0.2.5 :8080</text>
+
+        <!-- DB Subnet -->
+        <rect x="505" y="200" width="180" height="130" rx="8" fill="#1a0d1a" stroke="#f7934f" stroke-width="1.5"/>
+        <text x="595" y="223" text-anchor="middle" fill="#ffb068" font-size="11" font-weight="700">DB Subnet</text>
+        <text x="595" y="238" text-anchor="middle" fill="#7a5030" font-size="10">10.0.3.0/24</text>
+        <rect x="628" y="213" width="50" height="16" rx="4" fill="#3d1a00" stroke="#f7934f"/>
+        <text x="653" y="224" text-anchor="middle" fill="#ffb068" font-size="9" font-weight="700">NSG ✓</text>
+        <rect x="520" y="248" width="70" height="40" rx="5" fill="#1a1233" stroke="#f7934f" stroke-width="1"/>
+        <text x="555" y="264" text-anchor="middle" fill="#ffb068" font-size="10">🗄 VM-db1</text>
+        <text x="555" y="278" text-anchor="middle" fill="#5a4030" font-size="9">10.0.3.4 :1433</text>
+        <rect x="605" y="248" width="70" height="40" rx="5" fill="#1a1233" stroke="#f7934f" stroke-width="1"/>
+        <text x="640" y="264" text-anchor="middle" fill="#ffb068" font-size="10">🗄 VM-db2</text>
+        <text x="640" y="278" text-anchor="middle" fill="#5a4030" font-size="9">10.0.3.5 :1433</text>
+
+        <!-- Arrows between tiers -->
+        <line x1="235" y1="265" x2="280" y2="265" stroke="#4f8ef7" stroke-width="1.5"/>
+        <polygon points="278,260 290,265 278,270" fill="#4f8ef7"/>
+        <line x1="460" y1="265" x2="505" y2="265" stroke="#4f8ef7" stroke-width="1.5"/>
+        <polygon points="503,260 515,265 503,270" fill="#4f8ef7"/>
+
+        <!-- Load Balancer -->
+        <rect x="55" y="360" width="180" height="44" rx="7" fill="#0a1a30" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="145" y="379" text-anchor="middle" fill="#7ab8ff" font-size="11" font-weight="700">⚖ Load Balancer</text>
+        <text x="145" y="396" text-anchor="middle" fill="#3a5070" font-size="10">Public IP: 40.x.x.x</text>
+        <!-- LB → web vms -->
+        <line x1="145" y1="360" x2="103" y2="288" stroke="#4f8ef7" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="145" y1="360" x2="190" y2="288" stroke="#4f8ef7" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Internet → LB -->
+        <rect x="55" y="440" width="180" height="44" rx="7" fill="#0d1e0d" stroke="#00c9a7" stroke-width="1.5"/>
+        <text x="145" y="459" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">🌐 Internet</text>
+        <text x="145" y="476" text-anchor="middle" fill="#336655" font-size="10">HTTP/HTTPS :80/:443</text>
+        <line x1="145" y1="440" x2="145" y2="404" stroke="#00c9a7" stroke-width="2"/>
+        <polygon points="139,406 145,394 151,406" fill="#00c9a7"/>
+
+        <!-- VNet Peering indicator -->
+        <rect x="505" y="360" width="180" height="44" rx="7" fill="#1a2a1a" stroke="#00c9a7" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="595" y="379" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">🔁 VNet Peering</text>
+        <text x="595" y="396" text-anchor="middle" fill="#336655" font-size="10">to vnet-mgmt (other region)</text>
+      </svg>
+    </div>
+    <p class="diagram-label">▲ 3-tier Azure VNet: Internet → Load Balancer → Web Subnet → App Subnet → DB Subnet, all with NSGs. VPN Gateway for on-prem. VNet Peering to management VNet.</p>
+  </div>
+
+  <!-- ===== SECTION 13 ===== -->
+  <div class="section" id="s13">
+    <h2 class="sec-title"><span class="icon">🖥</span> 13. Deploy Azure VMs in a Network</h2>
+    <p>Here's how to deploy a Virtual Machine inside your Azure VNet, step by step.</p>
+
+    <h3 class="sub-title">Prerequisites — Build the Network First</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Create a Resource Group</h4><p>Portal → Resource Groups → + Create → Name: <code>rg-myapp</code>, Region: <code>East US</code> → Review + Create</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Create a Virtual Network</h4><p>Portal → Virtual Networks → + Create → VNet name: <code>vnet-myapp</code>, Address space: <code>10.0.0.0/16</code></p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Add Subnets</h4><p>Inside VNet → Subnets → + Subnet → Name: <code>snet-web</code>, Range: <code>10.0.1.0/24</code>. Repeat for app (<code>10.0.2.0/24</code>) and db (<code>10.0.3.0/24</code>).</p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Create NSG</h4><p>Portal → Network Security Groups → + Create → Name: <code>nsg-web</code>. Add inbound rule: Allow TCP port 80 from Internet. Deny all else.</p></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Associate NSG with Subnet</h4><p>In the NSG → Settings → Subnets → Associate → pick <code>snet-web</code>.</p></div></div>
+    </div>
+
+    <h3 class="sub-title">Deploy a VM Into the Network</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">6</div><div class="step-body"><h4>Create Virtual Machine</h4><p>Portal → Virtual Machines → + Create → Azure Virtual Machine</p></div></div>
+      <div class="step"><div class="step-num">7</div><div class="step-body"><h4>Basics Tab</h4><p>Resource Group: <code>rg-myapp</code> · VM Name: <code>vm-web01</code> · Region: <code>East US</code> · Image: Ubuntu 22.04 LTS · Size: Standard_B1s · Auth: SSH key or password</p></div></div>
+      <div class="step"><div class="step-num">8</div><div class="step-body"><h4>Networking Tab ← Most Important</h4><p>Virtual Network: <code>vnet-myapp</code> · Subnet: <code>snet-web (10.0.1.0/24)</code> · Public IP: Create new (or None for private-only) · NIC NSG: select existing NSG <code>nsg-web</code></p></div></div>
+      <div class="step"><div class="step-num">9</div><div class="step-body"><h4>Review + Create</h4><p>Azure validates → click Create. VM gets private IP (e.g., <code>10.0.1.4</code>) from subnet's DHCP pool automatically.</p></div></div>
+      <div class="step"><div class="step-num">10</div><div class="step-body"><h4>Connect to VM</h4><p>Via public IP using SSH: <code>ssh azureuser@&lt;public-ip&gt;</code>. Or use Azure Bastion for browser-based access without opening port 22 to internet.</p></div></div>
+    </div>
+
+    <div class="callout green">
+      ✅ <strong>Result:</strong> Your VM (<code>vm-web01</code>) is now deployed with private IP <code>10.0.1.4</code> inside <code>snet-web</code>, protected by <code>nsg-web</code>, reachable on port 80 from the internet through its public IP or a Load Balancer.
+    </div>
+
+    <h3 class="sub-title">Private IP Assignment Summary</h3>
+    <table>
+      <tr><th>Resource</th><th>IP</th><th>Subnet</th><th>Role</th></tr>
+      <tr><td>vm-web01</td><td>10.0.1.4</td><td>snet-web</td><td>Web server (port 80)</td></tr>
+      <tr><td>vm-web02</td><td>10.0.1.5</td><td>snet-web</td><td>Web server (port 80)</td></tr>
+      <tr><td>vm-app01</td><td>10.0.2.4</td><td>snet-app</td><td>App server (port 8080)</td></tr>
+      <tr><td>vm-db01</td><td>10.0.3.4</td><td>snet-db</td><td>Database (port 1433)</td></tr>
+      <tr><td>Azure reserved</td><td>.0, .1, .2, .3, .255</td><td>each subnet</td><td>Network/GW/DNS/Broadcast</td></tr>
+    </table>
+
+    <div class="callout orange">⚠️ <strong>Security best practice:</strong> Never expose the DB subnet to the internet. NSG on <code>snet-db</code> should only allow inbound traffic from <code>10.0.2.0/24</code> (the app subnet). The web subnet only needs port 80/443 open. The app subnet only accepts traffic from the web subnet.</div>
+  </div>
+
+  <div style="height:60px"></div>
+
 </div>
 
 <script>
-function moveNo() {
-  const noBtn = document.getElementById("no");
-  const x = Math.random() * (window.innerWidth - 100);
-  const y = Math.random() * (window.innerHeight - 50);
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
-}
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('.section');
+  const links = document.querySelectorAll('#sidebar a');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`#sidebar a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => obs.observe(s));
 
-function celebrate() {
-  document.getElementById("buttons").style.display = "none";
-  document.querySelector("h1").style.display = "none";
-  document.getElementById("celebration").style.display = "block";
-}
+  // Smooth scroll
+  links.forEach(l => l.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(l.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+  }));
 </script>
-
 </body>
 </html>

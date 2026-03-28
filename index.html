@@ -2,780 +2,1656 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Networking & Azure — Study Notes</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AZ-700 — Azure Networking Mastery</title>
 <style>
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #22263a;
-    --border: #2e3250;
-    --accent: #4f8ef7;
-    --accent2: #7c5cfc;
-    --accent3: #00c9a7;
-    --accent4: #f7934f;
-    --text: #e8eaf6;
-    --muted: #8b90b0;
-    --code-bg: #12141e;
-    --tag-blue: #1a3a5c;
-    --tag-green: #0d3d35;
-    --tag-orange: #3d2a10;
-    --tag-purple: #2a1d4d;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+:root{
+  --bg:#08090f;--surface:#10121e;--surface2:#181b2e;--surface3:#1e2238;
+  --border:#252840;--border2:#2e3460;
+  --blue:#4f8ef7;--blue2:#2563eb;--teal:#00c9a7;--purple:#7c5cfc;
+  --orange:#f7934f;--pink:#f06292;--yellow:#ffd54f;--red:#ef5350;
+  --text:#e8eaf6;--muted:#7a80a8;--muted2:#4a5070;
+  --sidebar-w:280px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.75;overflow-x:hidden}
 
-  /* SIDEBAR */
-  #sidebar {
-    position: fixed; top: 0; left: 0; width: 270px; height: 100vh;
-    background: var(--surface); border-right: 1px solid var(--border);
-    overflow-y: auto; padding: 20px 0; z-index: 100;
-  }
-  #sidebar .logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
-  #sidebar .logo span { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-  #sidebar .logo p { font-size: 11px; color: var(--muted); margin-top: 4px; }
-  .nav-section { padding: 8px 20px 4px; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-  #sidebar a { display: block; padding: 7px 20px 7px 28px; font-size: 13px; color: var(--muted); text-decoration: none; border-left: 3px solid transparent; transition: all 0.2s; }
-  #sidebar a:hover, #sidebar a.active { color: var(--text); border-left-color: var(--accent); background: rgba(79,142,247,0.07); }
-  #sidebar a.sub { padding-left: 44px; font-size: 12px; }
+/* ── SIDEBAR ── */
+#sb{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;z-index:200;display:flex;flex-direction:column}
+#sb::-webkit-scrollbar{width:4px}#sb::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sb-head{padding:20px 18px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{font-size:17px;font-weight:800;background:linear-gradient(90deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.3px}
+.sb-sub{font-size:11px;color:var(--muted);margin-top:3px}
+#search-box{margin:12px 14px 0;padding:7px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;width:calc(100% - 28px);outline:none}
+#search-box:focus{border-color:var(--blue)}
+.sb-sec{padding:14px 18px 4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2)}
+.sb-link{display:flex;align-items:center;gap:8px;padding:7px 18px;font-size:12.5px;color:var(--muted);text-decoration:none;border-left:3px solid transparent;cursor:pointer;transition:all .15s}
+.sb-link:hover,.sb-link.active{color:var(--text);border-left-color:var(--blue);background:rgba(79,142,247,.07)}
+.sb-link .ico{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.sb-link.sub{padding-left:44px;font-size:12px}
 
-  /* MAIN */
-  #main { margin-left: 270px; padding: 40px 50px; max-width: 1100px; }
+/* ── MAIN ── */
+#main{margin-left:var(--sidebar-w);padding:44px 56px 80px;max-width:1180px}
+.hero{margin-bottom:60px;padding:40px 0 30px;border-bottom:1px solid var(--border)}
+.hero h1{font-size:40px;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--purple),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.15;margin-bottom:10px}
+.hero p{color:var(--muted);font-size:16px;max-width:680px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin:3px}
+.b-blue{background:#0d2040;color:#7ab8ff;border:1px solid #1e4080}
+.b-green{background:#0d3330;color:#4fd1b8;border:1px solid #1a6050}
+.b-purple{background:#1e1040;color:#c4a6ff;border:1px solid #4a2a80}
+.b-orange{background:#2a1500;color:#ffb068;border:1px solid #6b4000}
+.b-red{background:#2a0d0d;color:#ff8080;border:1px solid #6a2020}
 
-  /* SECTIONS */
-  .section { margin-bottom: 70px; scroll-margin-top: 30px; }
-  h1.page-title { font-size: 32px; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
-  .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 40px; }
-  h2.sec-title { font-size: 22px; font-weight: 700; color: var(--accent); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-  h2.sec-title .icon { font-size: 20px; }
-  h3.sub-title { font-size: 16px; font-weight: 600; color: var(--accent3); margin: 24px 0 10px; }
-  p { color: #c5c8e0; margin-bottom: 12px; }
+/* ── SECTIONS ── */
+.chapter{margin-bottom:80px;scroll-margin-top:30px}
+.ch-header{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.ch-num{width:36px;height:36px;background:linear-gradient(135deg,var(--blue2),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
+h2.ch-title{font-size:26px;font-weight:800;color:var(--text)}
+.ch-desc{color:var(--muted);font-size:14px;margin-bottom:28px;padding-left:50px}
 
-  /* CARDS */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; }
-  .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  .card-row.three { grid-template-columns: 1fr 1fr 1fr; }
-  .card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--accent4); }
-  .card p { font-size: 13px; margin-bottom: 0; color: var(--muted); }
+h3.sh{font-size:17px;font-weight:700;color:var(--blue);margin:32px 0 12px;display:flex;align-items:center;gap:8px}
+h3.sh::before{content:'';display:block;width:4px;height:18px;background:var(--blue);border-radius:2px}
+h4.ssh{font-size:14px;font-weight:700;color:var(--teal);margin:20px 0 8px}
+p{color:#c2c5e0;margin-bottom:12px;font-size:14.5px}
 
-  /* TAGS */
-  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin: 2px; }
-  .tag.blue { background: var(--tag-blue); color: #7ab8ff; }
-  .tag.green { background: var(--tag-green); color: #4fd1b8; }
-  .tag.orange { background: var(--tag-orange); color: #ffb068; }
-  .tag.purple { background: var(--tag-purple); color: #b59fff; }
+/* ── CARDS ── */
+.grid{display:grid;gap:14px;margin-bottom:20px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.card h4{font-size:13px;font-weight:700;margin-bottom:7px;color:var(--orange)}
+.card p{font-size:13px;color:var(--muted);margin:0}
+.card.blue{border-color:#1e4080;background:#0a1830}
+.card.teal{border-color:#1a6050;background:#081e18}
+.card.purple{border-color:#4a2a80;background:#120d20}
+.card.orange{border-color:#6b4000;background:#1e1000}
+.card.red{border-color:#6a2020;background:#1a0808}
 
-  /* CODE / FORMULA */
-  code { background: var(--code-bg); color: var(--accent3); padding: 2px 7px; border-radius: 4px; font-size: 13px; font-family: 'Consolas', monospace; }
-  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; overflow-x: auto; font-size: 13px; font-family: 'Consolas', monospace; color: #a8d8b8; margin: 12px 0 18px; line-height: 1.6; }
+/* ── CALLOUT ── */
+.callout{border-left:4px solid var(--blue);background:rgba(79,142,247,.07);border-radius:0 8px 8px 0;padding:13px 18px;margin:16px 0;font-size:13.5px;color:#a0b0d0}
+.callout.green{border-color:var(--teal);background:rgba(0,201,167,.07);color:#80c0b0}
+.callout.orange{border-color:var(--orange);background:rgba(247,147,79,.07);color:#c09060}
+.callout.purple{border-color:var(--purple);background:rgba(124,92,252,.07);color:#a090d0}
+.callout.red{border-color:var(--red);background:rgba(239,83,80,.07);color:#c08080}
+.callout strong{color:var(--text)}
 
-  /* CALLOUT */
-  .callout { border-left: 4px solid var(--accent); background: rgba(79,142,247,0.07); border-radius: 0 8px 8px 0; padding: 12px 18px; margin: 14px 0; font-size: 13px; color: var(--muted); }
-  .callout.green { border-color: var(--accent3); background: rgba(0,201,167,0.07); }
-  .callout.orange { border-color: var(--accent4); background: rgba(247,147,79,0.07); }
-  .callout.purple { border-color: var(--accent2); background: rgba(124,92,252,0.07); }
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;margin:14px 0 20px;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--surface2);color:var(--blue);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:#c2c5e0;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
 
-  /* TABLE */
-  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
-  th { background: var(--surface2); color: var(--accent); padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #c5c8e0; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
+/* ── CODE ── */
+code{background:#0d0f18;color:var(--teal);padding:2px 7px;border-radius:4px;font-size:13px;font-family:'Consolas','Courier New',monospace}
+pre{background:#0a0c18;border:1px solid var(--border);border-radius:8px;padding:16px 20px;overflow-x:auto;font-size:13px;font-family:'Consolas',monospace;color:#90d0a0;margin:12px 0 18px;line-height:1.6}
+pre .c{color:var(--muted2)}
+pre .k{color:#79b8ff}
+pre .s{color:#f9a87e}
 
-  /* DIAGRAMS (SVG wrappers) */
-  .diagram-wrap { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; }
-  .diagram-wrap svg text { font-family: 'Segoe UI', sans-serif; }
-  .diagram-label { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
+/* ── STEPS ── */
+.steps{margin:14px 0}
+.step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start}
+.sn{min-width:28px;height:28px;background:var(--purple);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;margin-top:2px}
+.sb2 h5{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px}
+.sb2 p{font-size:13px;color:var(--muted);margin:0}
 
-  /* IP CLASS BOX */
-  .ip-box { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
-  .ip-cls { border-radius: 8px; padding: 14px 18px; min-width: 130px; flex: 1; }
-  .ip-cls .cls-lbl { font-size: 18px; font-weight: 800; }
-  .ip-cls .cls-range { font-size: 11px; margin-top: 4px; font-family: monospace; }
-  .ip-cls p { font-size: 12px; margin-top: 6px; color: inherit; opacity: 0.85; }
-  .cls-a { background: #112244; border: 1px solid #1e4080; color: #7ab8ff; }
-  .cls-b { background: #0d3330; border: 1px solid #1a6050; color: #4fd1b8; }
-  .cls-c { background: #2a1a00; border: 1px solid #6b4500; color: #ffb068; }
-  .cls-d { background: #2a1a3d; border: 1px solid #5a3a80; color: #c4a6ff; }
-  .cls-e { background: #1a1a1a; border: 1px solid #444; color: #999; }
+/* ── DIAGRAM ── */
+.dbox{background:#090b14;border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;overflow-x:auto;text-align:center}
+.dbox svg text{font-family:'Segoe UI',sans-serif}
+.dlabel{font-size:12px;color:var(--muted2);text-align:center;margin-top:10px;font-style:italic}
 
-  /* SUBNET CALC */
-  .subnet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
-  .subnet-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-  .subnet-card h5 { color: var(--accent4); font-size: 13px; margin-bottom: 8px; }
-  .subnet-card p { font-size: 12px; color: var(--muted); }
+/* ── COMPARISON ── */
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin:16px 0;align-items:stretch}
+.vs-col{background:var(--surface2);border:1px solid var(--border);padding:18px;border-radius:10px 0 0 10px}
+.vs-col:last-child{border-radius:0 10px 10px 0}
+.vs-mid{background:var(--surface3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;padding:0 14px;font-size:18px;color:var(--muted2)}
+.vs-col h5{font-size:13px;font-weight:700;margin-bottom:8px}
+.vs-col p{font-size:12px;color:var(--muted);margin:0}
+.vs-col.left h5{color:var(--blue)}
+.vs-col.right h5{color:var(--teal)}
 
-  /* AZURE COMPONENT */
-  .az-comp { display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; }
-  .az-icon { font-size: 28px; min-width: 40px; text-align: center; }
-  .az-comp h4 { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
-  .az-comp p { font-size: 13px; color: var(--muted); margin: 0; }
+/* ── SCENARIO BOX ── */
+.scenario{background:linear-gradient(135deg,#0d1a2a,#120d20);border:1px solid #2a3060;border-radius:12px;padding:22px 24px;margin:20px 0}
+.scenario .sc-title{font-size:14px;font-weight:700;color:var(--yellow);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.scenario p{font-size:13.5px;color:#b0b8d8;margin-bottom:8px}
+.scenario .solution{background:#080e1a;border:1px solid #1a2a40;border-radius:8px;padding:14px;margin-top:12px}
+.scenario .solution h6{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
 
-  /* STEP */
-  .steps { counter-reset: step; }
-  .step { display: flex; gap: 16px; margin-bottom: 18px; }
-  .step-num { counter-increment: step; min-width: 32px; height: 32px; background: var(--accent2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; margin-top: 2px; }
-  .step-body h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-  .step-body p { font-size: 13px; color: var(--muted); margin: 0; }
+/* ── ACCORDION ── */
+details{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+summary{padding:14px 18px;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--text);list-style:none;display:flex;align-items:center;gap:8px}
+summary::before{content:'▶';font-size:11px;color:var(--muted);transition:transform .2s}
+details[open] summary::before{transform:rotate(90deg)}
+.acc-body{padding:4px 18px 18px}
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* ── PROGRESS PILLS ── */
+.topic-pills{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:default}
 
-  @media (max-width: 900px) {
-    #sidebar { display: none; }
-    #main { margin-left: 0; padding: 24px 18px; }
-    .card-row, .card-row.three { grid-template-columns: 1fr; }
-    .subnet-grid { grid-template-columns: 1fr; }
-  }
+/* ── TABS ── */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── FORMULA BOX ── */
+.formula{background:#090b14;border:1px solid #1e3050;border-radius:8px;padding:14px 18px;margin:12px 0;font-family:'Consolas',monospace;font-size:13px;color:#80c0ff;text-align:center}
+
+/* ── IP VISUAL ── */
+.ip-octet{display:inline-flex;gap:2px;margin:8px 0}
+.oct{background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:4px 10px;font-family:monospace;font-size:14px;font-weight:700;color:var(--teal)}
+.oct.net{background:#0d2040;border-color:#2a5080;color:#7ab8ff}
+.oct.host{background:#0d3020;border-color:#1a6040;color:#4fd1b8}
+.oct-dot{color:var(--muted);font-size:18px;font-weight:700;align-self:center}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:920px){
+  #sb{display:none}
+  #main{margin-left:0;padding:24px 16px 60px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .vs{grid-template-columns:1fr;gap:8px}
+  .vs-mid{padding:8px;border-radius:0;border:none}
+}
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<nav id="sidebar">
-  <div class="logo">
-    <span>📡 NetNotes</span>
-    <p>Networking + Azure Study Guide</p>
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<nav id="sb">
+  <div class="sb-head">
+    <div class="sb-logo">☁ AZ-700 Mastery</div>
+    <div class="sb-sub">Azure Network Engineer · Study Guide</div>
+    <input id="search-box" placeholder="🔍 Search topics..." oninput="doSearch(this.value)">
   </div>
-  <div class="nav-section">Fundamentals</div>
-  <a href="#s1">🌐 What is a Network?</a>
-  <a href="#s2">🏢 Physical DC Diagram</a>
-  <a href="#s3">📦 Router — How It Works</a>
-  <a href="#s4">🔀 Switch — How It Works</a>
-  <a href="#s5">🔗 LAN</a>
-  <div class="nav-section">IP Addressing</div>
-  <a href="#s6">🔢 IP Address Basics</a>
-  <a href="#s7">🅰 IP Classes A B C D E</a>
-  <a href="#s8">🎭 Subnet Mask</a>
-  <a href="#s9">📐 CIDR Block Calculation</a>
-  <div class="nav-section">Azure Networking</div>
-  <a href="#s10">☁ Azure Virtual Network</a>
-  <a href="#s11">🧱 Azure Components</a>
-  <a href="#s12">🗺 Azure VNet Diagram</a>
-  <a href="#s13">🖥 Deploy Azure VMs</a>
+
+  <div class="sb-sec">Networking Foundations</div>
+  <a class="sb-link" onclick="go('c1')"><span class="ico">🌐</span>What is a Network?</a>
+  <a class="sb-link" onclick="go('c2')"><span class="ico">🔌</span>LAN / WAN / MAN / WLAN</a>
+  <a class="sb-link" onclick="go('c3')"><span class="ico">🔀</span>Routers & Switches</a>
+  <a class="sb-link" onclick="go('c4')"><span class="ico">🔢</span>IP Addressing (v4/v6)</a>
+  <a class="sb-link" onclick="go('c5')"><span class="ico">🅰</span>IP Classes A–E</a>
+  <a class="sb-link" onclick="go('c6')"><span class="ico">🎭</span>Subnet Mask & CIDR</a>
+
+  <div class="sb-sec">Azure Core Networking</div>
+  <a class="sb-link" onclick="go('c7')"><span class="ico">🏗</span>Azure VNet Deep Dive</a>
+  <a class="sb-link" onclick="go('c8')"><span class="ico">🔲</span>Subnets & Routing</a>
+  <a class="sb-link" onclick="go('c9')"><span class="ico">🛡</span>NSG & ASG</a>
+  <a class="sb-link" onclick="go('c10')"><span class="ico">🔥</span>Azure Firewall</a>
+
+  <div class="sb-sec">Azure DNS & Endpoints</div>
+  <a class="sb-link" onclick="go('c11')"><span class="ico">🗣</span>Azure DNS (Public & Private)</a>
+  <a class="sb-link" onclick="go('c12')"><span class="ico">🔒</span>Private Endpoints</a>
+  <a class="sb-link" onclick="go('c13')"><span class="ico">🔗</span>Private Link Service</a>
+  <a class="sb-link" onclick="go('c14')"><span class="ico">🚪</span>Service Endpoints</a>
+
+  <div class="sb-sec">Load Balancing</div>
+  <a class="sb-link" onclick="go('c15')"><span class="ico">⚖</span>Azure Load Balancer</a>
+  <a class="sb-link" onclick="go('c16')"><span class="ico">🚦</span>Application Gateway</a>
+  <a class="sb-link" onclick="go('c17')"><span class="ico">🌍</span>Azure Front Door</a>
+  <a class="sb-link" onclick="go('c18')"><span class="ico">🗺</span>Traffic Manager</a>
+
+  <div class="sb-sec">Hybrid Connectivity</div>
+  <a class="sb-link" onclick="go('c19')"><span class="ico">🔒</span>VPN Gateway (S2S/P2S)</a>
+  <a class="sb-link" onclick="go('c20')"><span class="ico">⚡</span>ExpressRoute</a>
+  <a class="sb-link" onclick="go('c21')"><span class="ico">🔁</span>VNet Peering</a>
+  <a class="sb-link" onclick="go('c22')"><span class="ico">🌀</span>Virtual WAN (vWAN)</a>
+
+  <div class="sb-sec">Advanced Topologies</div>
+  <a class="sb-link" onclick="go('c23')"><span class="ico">🕸</span>Hub-Spoke Architecture</a>
+  <a class="sb-link" onclick="go('c24')"><span class="ico">🔑</span>Azure Bastion</a>
+  <a class="sb-link" onclick="go('c25')"><span class="ico">📡</span>NAT Gateway</a>
+  <a class="sb-link" onclick="go('c26')"><span class="ico">🌐</span>DDoS Protection</a>
+
+  <div class="sb-sec">Monitoring & Troubleshoot</div>
+  <a class="sb-link" onclick="go('c27')"><span class="ico">📊</span>Network Watcher</a>
+  <a class="sb-link" onclick="go('c28')"><span class="ico">🔧</span>Troubleshooting Scenarios</a>
+  <a class="sb-link" onclick="go('c29')"><span class="ico">🖥</span>Deploy VMs in Azure Network</a>
 </nav>
 
-<!-- MAIN CONTENT -->
+<!-- ═══════════ MAIN ═══════════ -->
 <div id="main">
 
-  <h1 class="page-title">Networking & Azure</h1>
-  <p class="page-sub">Complete study notes — from fundamentals to Azure virtual networks and VM deployment.</p>
-
-  <!-- ===== SECTION 1 ===== -->
-  <div class="section" id="s1">
-    <h2 class="sec-title"><span class="icon">🌐</span> 1. What is a Network?</h2>
-    <p>A <strong>computer network</strong> is a collection of two or more devices (computers, servers, phones, printers) connected together so they can <em>communicate</em> and <em>share resources</em> — like files, internet connections, and printers.</p>
-
-    <div class="card-row">
-      <div class="card">
-        <h4>📤 Why do we need Networks?</h4>
-        <p>Share files & data instantly · Share internet bandwidth · Centralise storage (servers) · Enable communication (email, video calls) · Run cloud & enterprise apps</p>
-      </div>
-      <div class="card">
-        <h4>🔑 Key Network Terms</h4>
-        <p><strong>Node:</strong> Any device on the network<br>
-        <strong>Host:</strong> A node that sends/receives data<br>
-        <strong>Protocol:</strong> Rules two devices agree on<br>
-        <strong>Bandwidth:</strong> Data capacity of the link</p>
-      </div>
-    </div>
-
-    <div class="callout">💡 <strong>Real-world analogy:</strong> A network is like a postal system. Devices are houses, IP addresses are postal addresses, routers are sorting centres, and data packets are letters.</div>
+<div class="hero">
+  <h1>Azure Networking<br>Complete Mastery Guide</h1>
+  <p>End-to-end study notes covering AZ-700 exam syllabus — from TCP/IP fundamentals to ExpressRoute, Front Door, Hub-Spoke, and real-world troubleshooting scenarios.</p>
+  <div style="margin-top:14px">
+    <span class="badge b-blue">AZ-700 Aligned</span>
+    <span class="badge b-green">29 Chapters</span>
+    <span class="badge b-purple">Deep Dive Diagrams</span>
+    <span class="badge b-orange">Troubleshooting Scenarios</span>
+    <span class="badge b-blue">On-Prem ↔ Azure Connectivity</span>
   </div>
-
-  <!-- ===== SECTION 2 ===== -->
-  <div class="section" id="s2">
-    <h2 class="sec-title"><span class="icon">🏢</span> 2. Physical Data Centre — Diagram</h2>
-    <p>A <strong>data centre (DC)</strong> houses servers, networking hardware, and storage. Here's how a basic physical DC looks:</p>
-
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 760 460" xmlns="http://www.w3.org/2000/svg" width="100%">
-        <!-- Internet Cloud -->
-        <ellipse cx="380" cy="38" rx="110" ry="28" fill="#1a2040" stroke="#4f8ef7" stroke-width="1.5"/>
-        <text x="380" y="43" text-anchor="middle" fill="#4f8ef7" font-size="13" font-weight="700">🌐 INTERNET</text>
-        <!-- Line to Core Router -->
-        <line x1="380" y1="66" x2="380" y2="110" stroke="#4f8ef7" stroke-width="2" stroke-dasharray="5,3"/>
-
-        <!-- Core Router -->
-        <rect x="310" y="110" width="140" height="44" rx="8" fill="#1a3050" stroke="#4f8ef7" stroke-width="1.5"/>
-        <text x="380" y="128" text-anchor="middle" fill="#7ab8ff" font-size="12" font-weight="700">🔀 Core Router</text>
-        <text x="380" y="145" text-anchor="middle" fill="#5a7a9a" font-size="10">Routes traffic in/out of DC</text>
-
-        <!-- Lines from Router to 3 zones -->
-        <line x1="380" y1="154" x2="180" y2="210" stroke="#4f8ef7" stroke-width="1.5"/>
-        <line x1="380" y1="154" x2="380" y2="210" stroke="#4f8ef7" stroke-width="1.5"/>
-        <line x1="380" y1="154" x2="580" y2="210" stroke="#4f8ef7" stroke-width="1.5"/>
-
-        <!-- Switch 1 -->
-        <rect x="110" y="210" width="140" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
-        <text x="180" y="225" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">🔀 L2 Switch</text>
-        <text x="180" y="241" text-anchor="middle" fill="#336655" font-size="10">Server Zone</text>
-
-        <!-- Switch 2 -->
-        <rect x="310" y="210" width="140" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
-        <text x="380" y="225" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">🔀 L2 Switch</text>
-        <text x="380" y="241" text-anchor="middle" fill="#336655" font-size="10">Workstation Zone</text>
-
-        <!-- Switch 3 -->
-        <rect x="510" y="210" width="140" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
-        <text x="580" y="225" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">🔀 L2 Switch</text>
-        <text x="580" y="241" text-anchor="middle" fill="#336655" font-size="10">DMZ Zone</text>
-
-        <!-- Servers under Switch 1 -->
-        <line x1="150" y1="250" x2="130" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
-        <line x1="180" y1="250" x2="180" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
-        <line x1="210" y1="250" x2="220" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
-        <rect x="100" y="295" width="65" height="38" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
-        <text x="132" y="309" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 Server</text>
-        <text x="132" y="323" text-anchor="middle" fill="#4a6080" font-size="9">Web / App</text>
-        <rect x="155" y="295" width="65" height="38" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
-        <text x="187" y="309" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 Server</text>
-        <text x="187" y="323" text-anchor="middle" fill="#4a6080" font-size="9">Database</text>
-        <rect x="197" y="295" width="50" height="38" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
-
-        <!-- Workstations under Switch 2 -->
-        <line x1="345" y1="250" x2="330" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
-        <line x1="380" y1="250" x2="380" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
-        <line x1="415" y1="250" x2="430" y2="295" stroke="#00c9a7" stroke-width="1.2"/>
-        <rect x="306" y="295" width="60" height="38" rx="5" fill="#1a1a33" stroke="#7c5cfc" stroke-width="1"/>
-        <text x="336" y="309" text-anchor="middle" fill="#b59fff" font-size="10">💻 Client</text>
-        <text x="336" y="323" text-anchor="middle" fill="#5a5080" font-size="9">Workstation</text>
-        <rect x="352" y="295" width="60" height="38" rx="5" fill="#1a1a33" stroke="#7c5cfc" stroke-width="1"/>
-        <text x="382" y="309" text-anchor="middle" fill="#b59fff" font-size="10">💻 Client</text>
-        <text x="382" y="323" text-anchor="middle" fill="#5a5080" font-size="9">Workstation</text>
-        <rect x="406" y="295" width="60" height="38" rx="5" fill="#1a1a33" stroke="#7c5cfc" stroke-width="1"/>
-        <text x="436" y="309" text-anchor="middle" fill="#b59fff" font-size="10">💻 Client</text>
-        <text x="436" y="323" text-anchor="middle" fill="#5a5080" font-size="9">Workstation</text>
-
-        <!-- Firewall / DMZ -->
-        <line x1="580" y1="250" x2="580" y2="295" stroke="#f7934f" stroke-width="1.5"/>
-        <rect x="530" y="295" width="100" height="40" rx="6" fill="#2a1500" stroke="#f7934f" stroke-width="1.5"/>
-        <text x="580" y="311" text-anchor="middle" fill="#ffb068" font-size="11" font-weight="700">🛡 Firewall</text>
-        <text x="580" y="326" text-anchor="middle" fill="#7a5030" font-size="10">DMZ / Public IP</text>
-
-        <!-- Storage area at bottom -->
-        <rect x="200" y="380" width="360" height="44" rx="8" fill="#1a1030" stroke="#7c5cfc" stroke-width="1.5"/>
-        <text x="380" y="399" text-anchor="middle" fill="#b59fff" font-size="12" font-weight="700">🗄 SAN / NAS — Shared Storage</text>
-        <text x="380" y="415" text-anchor="middle" fill="#5a4080" font-size="10">Connected to all servers via dedicated storage network</text>
-        <line x1="132" y1="333" x2="280" y2="380" stroke="#7c5cfc" stroke-width="1" stroke-dasharray="4,3"/>
-        <line x1="187" y1="333" x2="380" y2="380" stroke="#7c5cfc" stroke-width="1" stroke-dasharray="4,3"/>
-      </svg>
-    </div>
-    <p class="diagram-label">▲ Typical Physical Data Centre layout — Internet → Router → Switches → Servers / Clients / Firewall → Shared Storage</p>
-
-    <div class="card-row">
-      <div class="card"><h4>🖥 Server</h4><p>Provides services — web, database, file storage, authentication. Always-on, high-spec machines in server racks.</p></div>
-      <div class="card"><h4>💻 Workstation / Client</h4><p>End-user machines that <em>consume</em> services from servers. PCs, laptops, thin clients.</p></div>
-    </div>
-  </div>
-
-  <!-- ===== SECTION 3 ===== -->
-  <div class="section" id="s3">
-    <h2 class="sec-title"><span class="icon">📦</span> 3. Router — What It Is & How It Works</h2>
-    <p>A <strong>router</strong> is a Layer-3 (Network Layer) device. Its job is to <em>decide the best path</em> for data packets to travel between different networks.</p>
-
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" width="100%">
-        <!-- Network A -->
-        <rect x="20" y="60" width="140" height="80" rx="10" fill="#112233" stroke="#4f8ef7" stroke-width="1.5"/>
-        <text x="90" y="95" text-anchor="middle" fill="#7ab8ff" font-size="13" font-weight="700">Network A</text>
-        <text x="90" y="113" text-anchor="middle" fill="#4a6a8a" font-size="11">192.168.1.0/24</text>
-        <!-- Arrow -->
-        <line x1="160" y1="100" x2="255" y2="100" stroke="#4f8ef7" stroke-width="2"/>
-        <polygon points="255,94 270,100 255,106" fill="#4f8ef7"/>
-        <!-- Router -->
-        <rect x="270" y="60" width="160" height="80" rx="10" fill="#1a3050" stroke="#4f8ef7" stroke-width="2"/>
-        <text x="350" y="88" text-anchor="middle" fill="#7ab8ff" font-size="14" font-weight="800">🔀 ROUTER</text>
-        <text x="350" y="106" text-anchor="middle" fill="#4a7aa0" font-size="11">Routing Table</text>
-        <text x="350" y="122" text-anchor="middle" fill="#4a7aa0" font-size="10">IP → Next Hop → Interface</text>
-        <!-- Arrow -->
-        <line x1="430" y1="100" x2="525" y2="100" stroke="#00c9a7" stroke-width="2"/>
-        <polygon points="525,94 540,100 525,106" fill="#00c9a7"/>
-        <!-- Network B -->
-        <rect x="540" y="60" width="140" height="80" rx="10" fill="#0d2d22" stroke="#00c9a7" stroke-width="1.5"/>
-        <text x="610" y="95" text-anchor="middle" fill="#4fd1b8" font-size="13" font-weight="700">Network B</text>
-        <text x="610" y="113" text-anchor="middle" fill="#336655" font-size="11">10.0.0.0/16</text>
-
-        <!-- Labels -->
-        <text x="90" y="155" text-anchor="middle" fill="#4a6080" font-size="11">Packet: src 192.168.1.5</text>
-        <text x="610" y="155" text-anchor="middle" fill="#336655" font-size="11">Dest: 10.0.0.20</text>
-        <text x="350" y="160" text-anchor="middle" fill="#7ab8ff" font-size="11">Router looks up table → forwards</text>
-      </svg>
-    </div>
-
-    <h3 class="sub-title">How a Router Works — Step by Step</h3>
-    <div class="steps">
-      <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Receives a Packet</h4><p>A data packet arrives on one of the router's interfaces (ports) from a device.</p></div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Reads Destination IP</h4><p>The router reads the packet's destination IP address in the Layer-3 header.</p></div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Looks Up Routing Table</h4><p>It checks its routing table — a list of networks and the next-hop IP or interface to reach them.</p></div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Forwards the Packet</h4><p>Sends the packet out on the correct interface toward the destination. Decrements TTL by 1.</p></div></div>
-    </div>
-    <div class="callout">💡 <strong>Key point:</strong> A router connects <em>different</em> networks. It works at IP (Layer 3). Unlike a switch, it understands IP addresses — not just MAC addresses.</div>
-  </div>
-
-  <!-- ===== SECTION 4 ===== -->
-  <div class="section" id="s4">
-    <h2 class="sec-title"><span class="icon">🔀</span> 4. Switch — What It Is & How It Works</h2>
-    <p>A <strong>network switch</strong> is a Layer-2 device that connects devices <em>within the same network</em> (same LAN). It uses <strong>MAC addresses</strong> to forward frames to the correct device only — unlike an old hub which broadcast to everyone.</p>
-
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" width="100%">
-        <!-- Switch box -->
-        <rect x="240" y="80" width="200" height="60" rx="10" fill="#0d2d1a" stroke="#00c9a7" stroke-width="2"/>
-        <text x="340" y="106" text-anchor="middle" fill="#4fd1b8" font-size="14" font-weight="800">🔀 SWITCH</text>
-        <text x="340" y="124" text-anchor="middle" fill="#336655" font-size="11">MAC Address Table</text>
-
-        <!-- Device A -->
-        <rect x="20" y="80" width="120" height="60" rx="8" fill="#112233" stroke="#4f8ef7" stroke-width="1.2"/>
-        <text x="80" y="106" text-anchor="middle" fill="#7ab8ff" font-size="12">💻 PC-A</text>
-        <text x="80" y="122" text-anchor="middle" fill="#4a6080" font-size="10">MAC: AA:BB:CC</text>
-        <line x1="140" y1="110" x2="240" y2="110" stroke="#4f8ef7" stroke-width="1.5"/>
-
-        <!-- Device B -->
-        <rect x="540" y="20" width="120" height="60" rx="8" fill="#112233" stroke="#4f8ef7" stroke-width="1.2"/>
-        <text x="600" y="46" text-anchor="middle" fill="#7ab8ff" font-size="12">🖥 Server</text>
-        <text x="600" y="62" text-anchor="middle" fill="#4a6080" font-size="10">MAC: DD:EE:FF</text>
-        <line x1="540" y1="50" x2="440" y2="95" stroke="#4f8ef7" stroke-width="1.5"/>
-
-        <!-- Device C -->
-        <rect x="540" y="140" width="120" height="60" rx="8" fill="#112233" stroke="#4f8ef7" stroke-width="1.2"/>
-        <text x="600" y="166" text-anchor="middle" fill="#7ab8ff" font-size="12">💻 PC-B</text>
-        <text x="600" y="182" text-anchor="middle" fill="#4a6080" font-size="10">MAC: 11:22:33</text>
-        <line x1="540" y1="170" x2="440" y2="125" stroke="#4f8ef7" stroke-width="1.5"/>
-
-        <!-- MAC table callout -->
-        <rect x="60" y="165" width="200" height="48" rx="6" fill="#0a1a0a" stroke="#336655" stroke-width="1"/>
-        <text x="160" y="182" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">MAC Table</text>
-        <text x="160" y="198" text-anchor="middle" fill="#336655" font-size="10">AA:BB:CC → Port 1</text>
-        <text x="160" y="210" text-anchor="middle" fill="#336655" font-size="10">DD:EE:FF → Port 2 | 11:22:33 → Port 3</text>
-      </svg>
-    </div>
-
-    <div class="card-row">
-      <div class="card"><h4>Hub vs Switch</h4><p><strong>Hub:</strong> Broadcasts packets to ALL ports — inefficient, security risk.<br><strong>Switch:</strong> Sends packets ONLY to the destination MAC — efficient, secure.</p></div>
-      <div class="card"><h4>L2 vs L3 Switch</h4><p><strong>L2 Switch:</strong> Works with MAC addresses only, within a single LAN.<br><strong>L3 Switch:</strong> Can also route between VLANs using IP addresses.</p></div>
-    </div>
-  </div>
-
-  <!-- ===== SECTION 5 ===== -->
-  <div class="section" id="s5">
-    <h2 class="sec-title"><span class="icon">🔗</span> 5. LAN — Local Area Network</h2>
-    <p>A <strong>LAN</strong> is a network that covers a <em>small geographic area</em> — a home, office, or building. All devices share the same network address space and can communicate without going through a router.</p>
-
-    <table>
-      <tr><th>Type</th><th>Coverage</th><th>Example</th></tr>
-      <tr><td><strong>LAN</strong></td><td>Single building / floor</td><td>Office floor with PCs and printers</td></tr>
-      <tr><td><strong>WAN</strong></td><td>Across cities / countries</td><td>Internet, corporate MPLS links</td></tr>
-      <tr><td><strong>MAN</strong></td><td>City-wide</td><td>City ISP backbone</td></tr>
-      <tr><td><strong>WLAN</strong></td><td>Wireless LAN</td><td>Wi-Fi in a cafe or home</td></tr>
-      <tr><td><strong>VLAN</strong></td><td>Logical segment of LAN</td><td>HR VLAN, Finance VLAN on same switch</td></tr>
-    </table>
-    <div class="callout green">💡 In Azure, every Virtual Network (VNet) is essentially a cloud LAN — isolated, private, with its own IP range.</div>
-  </div>
-
-  <!-- ===== SECTION 6 ===== -->
-  <div class="section" id="s6">
-    <h2 class="sec-title"><span class="icon">🔢</span> 6. IP Address — The Basics</h2>
-    <p>An <strong>IP address (Internet Protocol address)</strong> is a unique numerical label assigned to every device on a network. It's how devices find and talk to each other — like a postal address for data.</p>
-
-    <h3 class="sub-title">IPv4 Structure</h3>
-    <div class="callout">
-      An IPv4 address is <strong>32 bits</strong> long, written as 4 <em>octets</em> separated by dots.<br>
-      Example: <code>192.168.1.100</code><br>
-      In binary: <code>11000000 . 10101000 . 00000001 . 01100100</code>
-    </div>
-    <div class="card-row three">
-      <div class="card"><h4>Network Part</h4><p>Identifies which network the device is on. Like the city + street in a postal address.</p></div>
-      <div class="card"><h4>Host Part</h4><p>Identifies the specific device within that network. Like the house number.</p></div>
-      <div class="card"><h4>Broadcast</h4><p>Address where all host bits = 1. A packet sent here goes to ALL devices on the subnet.</p></div>
-    </div>
-
-    <h3 class="sub-title">Public vs Private IP</h3>
-    <table>
-      <tr><th>Type</th><th>Ranges</th><th>Usage</th></tr>
-      <tr><td><strong>Private</strong></td><td>10.0.0.0/8 · 172.16.0.0/12 · 192.168.0.0/16</td><td>Internal LAN — not routable on internet</td></tr>
-      <tr><td><strong>Public</strong></td><td>Everything else</td><td>Routable on internet, assigned by ISP</td></tr>
-      <tr><td><strong>Loopback</strong></td><td>127.0.0.1</td><td>Device talking to itself (testing)</td></tr>
-      <tr><td><strong>APIPA</strong></td><td>169.254.x.x</td><td>Auto-assigned when DHCP fails</td></tr>
-    </table>
-  </div>
-
-  <!-- ===== SECTION 7 ===== -->
-  <div class="section" id="s7">
-    <h2 class="sec-title"><span class="icon">🅰</span> 7. IP Address Classes — A, B, C, D, E</h2>
-    <p>IPv4 addresses were originally divided into <strong>classes</strong> based on the first octet. This determined the size of the network and host portions.</p>
-
-    <div class="ip-box">
-      <div class="ip-cls cls-a">
-        <div class="cls-lbl">Class A</div>
-        <div class="cls-range">1.0.0.0 – 126.255.255.255</div>
-        <p>First bit: <code>0</code><br>Network bits: 8 | Host bits: 24<br>Hosts per network: ~16 million<br>Use: Very large enterprises, ISPs</p>
-        <span class="tag blue">Default Mask: /8 → 255.0.0.0</span>
-      </div>
-      <div class="ip-cls cls-b">
-        <div class="cls-lbl">Class B</div>
-        <div class="cls-range">128.0.0.0 – 191.255.255.255</div>
-        <p>First bits: <code>10</code><br>Network bits: 16 | Host bits: 16<br>Hosts per network: ~65,000<br>Use: Medium-large organisations</p>
-        <span class="tag green">Default Mask: /16 → 255.255.0.0</span>
-      </div>
-      <div class="ip-cls cls-c">
-        <div class="cls-lbl">Class C</div>
-        <div class="cls-range">192.0.0.0 – 223.255.255.255</div>
-        <p>First bits: <code>110</code><br>Network bits: 24 | Host bits: 8<br>Hosts per network: 254<br>Use: Small offices, home networks</p>
-        <span class="tag orange">Default Mask: /24 → 255.255.255.0</span>
-      </div>
-      <div class="ip-cls cls-d">
-        <div class="cls-lbl">Class D</div>
-        <div class="cls-range">224.0.0.0 – 239.255.255.255</div>
-        <p>First bits: <code>1110</code><br>No host/network split<br>Use: Multicast groups (streaming, OSPF, routing protocols)</p>
-        <span class="tag purple">No subnet mask</span>
-      </div>
-      <div class="ip-cls cls-e">
-        <div class="cls-lbl">Class E</div>
-        <div class="cls-range">240.0.0.0 – 255.255.255.255</div>
-        <p>First bits: <code>1111</code><br>Reserved — experimental use only.<br>255.255.255.255 = limited broadcast</p>
-        <span class="tag" style="background:#222;color:#666">Reserved / Experimental</span>
-      </div>
-    </div>
-
-    <div class="callout orange">⚠️ <strong>Important:</strong> Classful addressing is largely obsolete today. Modern networking uses <strong>CIDR</strong> (Classless Inter-Domain Routing) which ignores class boundaries and uses a prefix length (e.g., /22) to define network size.</div>
-
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 700 90" xmlns="http://www.w3.org/2000/svg" width="100%">
-        <rect x="10" y="20" width="125" height="50" rx="6" fill="#112244" stroke="#4f8ef7" stroke-width="1.5"/>
-        <text x="72" y="43" text-anchor="middle" fill="#7ab8ff" font-size="12" font-weight="700">Class A</text>
-        <text x="72" y="60" text-anchor="middle" fill="#4a6a8a" font-size="10">1–126</text>
-
-        <rect x="145" y="20" width="125" height="50" rx="6" fill="#0d3330" stroke="#00c9a7" stroke-width="1.5"/>
-        <text x="207" y="43" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">Class B</text>
-        <text x="207" y="60" text-anchor="middle" fill="#336655" font-size="10">128–191</text>
-
-        <rect x="280" y="20" width="125" height="50" rx="6" fill="#2a1a00" stroke="#f7934f" stroke-width="1.5"/>
-        <text x="342" y="43" text-anchor="middle" fill="#ffb068" font-size="12" font-weight="700">Class C</text>
-        <text x="342" y="60" text-anchor="middle" fill="#7a5030" font-size="10">192–223</text>
-
-        <rect x="415" y="20" width="125" height="50" rx="6" fill="#2a1a3d" stroke="#7c5cfc" stroke-width="1.5"/>
-        <text x="477" y="43" text-anchor="middle" fill="#c4a6ff" font-size="12" font-weight="700">Class D</text>
-        <text x="477" y="60" text-anchor="middle" fill="#5a4080" font-size="10">224–239 Multicast</text>
-
-        <rect x="550" y="20" width="130" height="50" rx="6" fill="#1a1a1a" stroke="#444" stroke-width="1.5"/>
-        <text x="615" y="43" text-anchor="middle" fill="#666" font-size="12" font-weight="700">Class E</text>
-        <text x="615" y="60" text-anchor="middle" fill="#444" font-size="10">240–255 Reserved</text>
-      </svg>
-    </div>
-  </div>
-
-  <!-- ===== SECTION 8 ===== -->
-  <div class="section" id="s8">
-    <h2 class="sec-title"><span class="icon">🎭</span> 8. Subnet Mask</h2>
-    <p>A <strong>subnet mask</strong> tells a device which part of an IP address is the <em>network</em> and which part is the <em>host</em>. It's also 32 bits, written in dotted-decimal or as a <strong>prefix length</strong> (CIDR notation).</p>
-
-    <div class="callout">
-      <strong>Example:</strong> IP = <code>192.168.1.50</code> | Mask = <code>255.255.255.0</code> (/24)<br>
-      Binary AND of IP & Mask → Network address = <code>192.168.1.0</code><br>
-      Host range: <code>192.168.1.1</code> – <code>192.168.1.254</code> | Broadcast: <code>192.168.1.255</code>
-    </div>
-
-    <h3 class="sub-title">Subnet Mask Quick Reference</h3>
-    <table>
-      <tr><th>CIDR</th><th>Subnet Mask</th><th>Hosts Available</th><th>Networks</th></tr>
-      <tr><td>/8</td><td>255.0.0.0</td><td>16,777,214</td><td>Class A</td></tr>
-      <tr><td>/16</td><td>255.255.0.0</td><td>65,534</td><td>Class B</td></tr>
-      <tr><td>/24</td><td>255.255.255.0</td><td>254</td><td>Class C</td></tr>
-      <tr><td>/25</td><td>255.255.255.128</td><td>126</td><td>Half a C</td></tr>
-      <tr><td>/26</td><td>255.255.255.192</td><td>62</td><td>Quarter C</td></tr>
-      <tr><td>/27</td><td>255.255.255.224</td><td>30</td><td>1/8th C</td></tr>
-      <tr><td>/28</td><td>255.255.255.240</td><td>14</td><td>Azure min subnet</td></tr>
-      <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>Point-to-point links</td></tr>
-      <tr><td>/32</td><td>255.255.255.255</td><td>1 (single host)</td><td>Host route</td></tr>
-    </table>
-    <div class="callout green">💡 Formula: <strong>Usable hosts = 2^(32 - prefix) - 2</strong>. Subtract 2 because network address and broadcast are reserved.</div>
-  </div>
-
-  <!-- ===== SECTION 9 ===== -->
-  <div class="section" id="s9">
-    <h2 class="sec-title"><span class="icon">📐</span> 9. CIDR Block Calculation</h2>
-    <p><strong>CIDR</strong> (Classless Inter-Domain Routing) replaces the old class system. You specify how many bits are the "network" part using a <code>/prefix</code> after the IP.</p>
-
-    <h3 class="sub-title">Step-by-Step CIDR Calculation</h3>
-    <div class="callout purple">
-      <strong>Given:</strong> <code>10.0.0.0/22</code> — find the network address, broadcast, host range, and total hosts.
-    </div>
-    <pre>
-1. Prefix = /22 → 22 bits for network, 10 bits for hosts
-2. Total addresses = 2^(32-22) = 2^10 = 1024
-3. Usable hosts = 1024 - 2 = 1022
-
-4. Network address: 10.0.0.0
-5. Broadcast:       10.0.3.255  (last address in the block)
-6. First host:      10.0.0.1
-7. Last host:       10.0.3.254
-
-Binary check:
-10.0.0.0  = 00001010.00000000.00000000.00000000
-Mask /22  = 11111111.11111111.11111100.00000000
-                                     ^^  ← 2 host bits in 3rd octet
-Host range spans: 10.0.0.x → 10.0.3.x (4 × 256 = 1024)</pre>
-
-    <div class="subnet-grid">
-      <div class="subnet-card">
-        <h5>How many subnets can I make?</h5>
-        <p>If you borrow <strong>n</strong> bits from host part:<br>
-        <code>Subnets = 2^n</code><br>
-        E.g., from /24, borrow 2 bits → /26 → 4 subnets, each with 62 hosts</p>
-      </div>
-      <div class="subnet-card">
-        <h5>Subnet increment</h5>
-        <p>Block size = <code>256 - last non-zero mask octet</code><br>
-        /26 → mask = 255.255.255.192 → 256-192 = <strong>64</strong><br>
-        Subnets: .0, .64, .128, .192</p>
-      </div>
-      <div class="subnet-card">
-        <h5>Azure reserved addresses</h5>
-        <p>In every Azure subnet, <strong>5 IPs are reserved</strong>:<br>
-        .0 Network · .1 Gateway · .2 DNS · .3 DNS · .255 Broadcast</p>
-      </div>
-      <div class="subnet-card">
-        <h5>Quick CIDR cheat</h5>
-        <p>/24 = 256 IPs · /23 = 512 · /22 = 1024 · /21 = 2048<br>
-        Each step down doubles the addresses.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== SECTION 10 ===== -->
-  <div class="section" id="s10">
-    <h2 class="sec-title"><span class="icon">☁</span> 10. Azure Virtual Network (VNet)</h2>
-    <p>An <strong>Azure Virtual Network (VNet)</strong> is the fundamental building block of your private network in Azure. It's the cloud equivalent of a traditional LAN — fully isolated, defined by an IP address space, and divided into subnets.</p>
-
-    <div class="card-row">
-      <div class="card">
-        <h4>What VNet gives you</h4>
-        <p>✅ Isolated private IP space<br>✅ Subnets to segment workloads<br>✅ Route traffic between subnets<br>✅ Connect to on-premises via VPN/ExpressRoute<br>✅ Filter traffic with NSGs and firewalls</p>
-      </div>
-      <div class="card">
-        <h4>VNet scope</h4>
-        <p>A VNet lives in one <strong>Azure Region</strong> (e.g., East US). VNets in different regions can connect via <strong>VNet Peering</strong>. A VNet belongs to one <strong>Resource Group</strong> and one <strong>Subscription</strong>.</p>
-      </div>
-    </div>
-    <div class="callout">💡 Think of VNet as the walls of your building in Azure. Everything inside can talk to each other. Nothing outside can enter unless you explicitly allow it.</div>
-  </div>
-
-  <!-- ===== SECTION 11 ===== -->
-  <div class="section" id="s11">
-    <h2 class="sec-title"><span class="icon">🧱</span> 11. Azure Network Components — Explained</h2>
-
-    <div class="az-comp">
-      <div class="az-icon">🏗</div>
-      <div><h4>Resource Group</h4><p>A logical container that holds all Azure resources for a project. Think of it as a folder. All network components (VNet, NSG, VMs) live inside it.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">🌐</div>
-      <div><h4>Virtual Network (VNet)</h4><p>The private network. You assign an address space, e.g., <code>10.0.0.0/16</code>. All subnets and VMs live within this space. Isolated from other VNets by default.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">🔲</div>
-      <div><h4>Subnet</h4><p>A subdivision of the VNet address space. Used to segment workloads (e.g., web-subnet, db-subnet). Each subnet gets a CIDR block from the VNet range. Azure reserves 5 IPs per subnet.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">🛡</div>
-      <div><h4>Network Security Group (NSG)</h4><p>A stateful firewall. Contains <em>inbound and outbound rules</em> that allow or deny traffic based on source IP, destination IP, port, and protocol. Attached to subnets or NICs.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">🌍</div>
-      <div><h4>Public IP Address</h4><p>Assigns a publicly routable IP to a VM or Load Balancer so it can be reached from the internet. Can be static or dynamic.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">🔌</div>
-      <div><h4>Network Interface Card (NIC)</h4><p>The virtual network adapter attached to a VM. Gets a private IP from the subnet. Can optionally have a public IP attached. A VM can have multiple NICs.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">📋</div>
-      <div><h4>Route Table (UDR)</h4><p>User Defined Routes let you override default Azure routing. E.g., force all traffic through a firewall VM before it leaves the subnet.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">⚖</div>
-      <div><h4>Azure Load Balancer</h4><p>Distributes inbound traffic across multiple VMs in a backend pool. Works at Layer 4 (TCP/UDP). Keeps apps available even if one VM fails.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">🔒</div>
-      <div><h4>VPN Gateway</h4><p>Connects your Azure VNet to your on-premises network or another VNet over an encrypted IPsec tunnel through the internet.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">🔁</div>
-      <div><h4>VNet Peering</h4><p>Connects two VNets (same region or cross-region) privately via Azure backbone — no internet, no VPN. Traffic stays on Microsoft's network at low latency.</p></div>
-    </div>
-    <div class="az-comp">
-      <div class="az-icon">🗣</div>
-      <div><h4>Azure DNS</h4><p>Provides name resolution for resources within a VNet using private DNS zones. VMs can resolve each other by hostname instead of IP.</p></div>
-    </div>
-  </div>
-
-  <!-- ===== SECTION 12 ===== -->
-  <div class="section" id="s12">
-    <h2 class="sec-title"><span class="icon">🗺</span> 12. Azure VNet Architecture Diagram</h2>
-    <p>Here's how a typical 3-tier Azure network with VMs, subnets, and NSGs is structured:</p>
-
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 740 550" xmlns="http://www.w3.org/2000/svg" width="100%">
-        <!-- Azure Region border -->
-        <rect x="10" y="10" width="720" height="530" rx="16" fill="none" stroke="#2e3250" stroke-width="1.5" stroke-dasharray="8,4"/>
-        <text x="30" y="34" fill="#4a5070" font-size="12" font-weight="700">☁ Azure Region: East US</text>
-
-        <!-- Resource Group -->
-        <rect x="25" y="45" width="690" height="480" rx="12" fill="#13162a" stroke="#2e3560" stroke-width="1"/>
-        <text x="45" y="68" fill="#4a60a0" font-size="11" font-weight="600">📁 Resource Group: rg-myapp-prod</text>
-
-        <!-- VNet -->
-        <rect x="40" y="80" width="660" height="430" rx="10" fill="#111830" stroke="#4f8ef7" stroke-width="2"/>
-        <text x="60" y="103" fill="#4f8ef7" font-size="12" font-weight="700">🌐 VNet: vnet-myapp   10.0.0.0/16</text>
-
-        <!-- Gateway Subnet -->
-        <rect x="55" y="115" width="180" height="70" rx="8" fill="#1a1a40" stroke="#7c5cfc" stroke-width="1.5"/>
-        <text x="145" y="138" text-anchor="middle" fill="#b59fff" font-size="11" font-weight="700">Gateway Subnet</text>
-        <text x="145" y="155" text-anchor="middle" fill="#5a4080" font-size="10">10.0.0.0/27</text>
-        <rect x="85" y="162" width="120" height="16" rx="4" fill="#2a1a4d" stroke="#7c5cfc" stroke-width="1"/>
-        <text x="145" y="174" text-anchor="middle" fill="#b59fff" font-size="10">🔒 VPN Gateway</text>
-        <!-- On-prem line -->
-        <line x1="55" y1="150" x2="10" y2="150" stroke="#7c5cfc" stroke-width="1.5" stroke-dasharray="5,3"/>
-        <text x="8" y="148" fill="#5a4080" font-size="9" text-anchor="end">On-Prem</text>
-
-        <!-- Web Subnet -->
-        <rect x="55" y="200" width="180" height="130" rx="8" fill="#1a2a1a" stroke="#00c9a7" stroke-width="1.5"/>
-        <text x="145" y="223" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">Web Subnet</text>
-        <text x="145" y="238" text-anchor="middle" fill="#336655" font-size="10">10.0.1.0/24</text>
-        <!-- NSG badge -->
-        <rect x="178" y="213" width="50" height="16" rx="4" fill="#0d3328" stroke="#00c9a7"/>
-        <text x="203" y="224" text-anchor="middle" fill="#4fd1b8" font-size="9" font-weight="700">NSG ✓</text>
-        <!-- VMs in web subnet -->
-        <rect x="68" y="248" width="70" height="40" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
-        <text x="103" y="264" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-web1</text>
-        <text x="103" y="278" text-anchor="middle" fill="#3a5070" font-size="9">10.0.1.4 :80</text>
-        <rect x="155" y="248" width="70" height="40" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
-        <text x="190" y="264" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-web2</text>
-        <text x="190" y="278" text-anchor="middle" fill="#3a5070" font-size="9">10.0.1.5 :80</text>
-
-        <!-- App Subnet -->
-        <rect x="280" y="200" width="180" height="130" rx="8" fill="#1a1a2a" stroke="#4f8ef7" stroke-width="1.5"/>
-        <text x="370" y="223" text-anchor="middle" fill="#7ab8ff" font-size="11" font-weight="700">App Subnet</text>
-        <text x="370" y="238" text-anchor="middle" fill="#3a5070" font-size="10">10.0.2.0/24</text>
-        <rect x="403" y="213" width="50" height="16" rx="4" fill="#0d2040" stroke="#4f8ef7"/>
-        <text x="428" y="224" text-anchor="middle" fill="#7ab8ff" font-size="9" font-weight="700">NSG ✓</text>
-        <rect x="293" y="248" width="70" height="40" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
-        <text x="328" y="264" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-app1</text>
-        <text x="328" y="278" text-anchor="middle" fill="#3a5070" font-size="9">10.0.2.4 :8080</text>
-        <rect x="380" y="248" width="70" height="40" rx="5" fill="#112233" stroke="#4f8ef7" stroke-width="1"/>
-        <text x="415" y="264" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-app2</text>
-        <text x="415" y="278" text-anchor="middle" fill="#3a5070" font-size="9">10.0.2.5 :8080</text>
-
-        <!-- DB Subnet -->
-        <rect x="505" y="200" width="180" height="130" rx="8" fill="#1a0d1a" stroke="#f7934f" stroke-width="1.5"/>
-        <text x="595" y="223" text-anchor="middle" fill="#ffb068" font-size="11" font-weight="700">DB Subnet</text>
-        <text x="595" y="238" text-anchor="middle" fill="#7a5030" font-size="10">10.0.3.0/24</text>
-        <rect x="628" y="213" width="50" height="16" rx="4" fill="#3d1a00" stroke="#f7934f"/>
-        <text x="653" y="224" text-anchor="middle" fill="#ffb068" font-size="9" font-weight="700">NSG ✓</text>
-        <rect x="520" y="248" width="70" height="40" rx="5" fill="#1a1233" stroke="#f7934f" stroke-width="1"/>
-        <text x="555" y="264" text-anchor="middle" fill="#ffb068" font-size="10">🗄 VM-db1</text>
-        <text x="555" y="278" text-anchor="middle" fill="#5a4030" font-size="9">10.0.3.4 :1433</text>
-        <rect x="605" y="248" width="70" height="40" rx="5" fill="#1a1233" stroke="#f7934f" stroke-width="1"/>
-        <text x="640" y="264" text-anchor="middle" fill="#ffb068" font-size="10">🗄 VM-db2</text>
-        <text x="640" y="278" text-anchor="middle" fill="#5a4030" font-size="9">10.0.3.5 :1433</text>
-
-        <!-- Arrows between tiers -->
-        <line x1="235" y1="265" x2="280" y2="265" stroke="#4f8ef7" stroke-width="1.5"/>
-        <polygon points="278,260 290,265 278,270" fill="#4f8ef7"/>
-        <line x1="460" y1="265" x2="505" y2="265" stroke="#4f8ef7" stroke-width="1.5"/>
-        <polygon points="503,260 515,265 503,270" fill="#4f8ef7"/>
-
-        <!-- Load Balancer -->
-        <rect x="55" y="360" width="180" height="44" rx="7" fill="#0a1a30" stroke="#4f8ef7" stroke-width="1.5"/>
-        <text x="145" y="379" text-anchor="middle" fill="#7ab8ff" font-size="11" font-weight="700">⚖ Load Balancer</text>
-        <text x="145" y="396" text-anchor="middle" fill="#3a5070" font-size="10">Public IP: 40.x.x.x</text>
-        <!-- LB → web vms -->
-        <line x1="145" y1="360" x2="103" y2="288" stroke="#4f8ef7" stroke-width="1" stroke-dasharray="4,3"/>
-        <line x1="145" y1="360" x2="190" y2="288" stroke="#4f8ef7" stroke-width="1" stroke-dasharray="4,3"/>
-
-        <!-- Internet → LB -->
-        <rect x="55" y="440" width="180" height="44" rx="7" fill="#0d1e0d" stroke="#00c9a7" stroke-width="1.5"/>
-        <text x="145" y="459" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">🌐 Internet</text>
-        <text x="145" y="476" text-anchor="middle" fill="#336655" font-size="10">HTTP/HTTPS :80/:443</text>
-        <line x1="145" y1="440" x2="145" y2="404" stroke="#00c9a7" stroke-width="2"/>
-        <polygon points="139,406 145,394 151,406" fill="#00c9a7"/>
-
-        <!-- VNet Peering indicator -->
-        <rect x="505" y="360" width="180" height="44" rx="7" fill="#1a2a1a" stroke="#00c9a7" stroke-width="1" stroke-dasharray="5,3"/>
-        <text x="595" y="379" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">🔁 VNet Peering</text>
-        <text x="595" y="396" text-anchor="middle" fill="#336655" font-size="10">to vnet-mgmt (other region)</text>
-      </svg>
-    </div>
-    <p class="diagram-label">▲ 3-tier Azure VNet: Internet → Load Balancer → Web Subnet → App Subnet → DB Subnet, all with NSGs. VPN Gateway for on-prem. VNet Peering to management VNet.</p>
-  </div>
-
-  <!-- ===== SECTION 13 ===== -->
-  <div class="section" id="s13">
-    <h2 class="sec-title"><span class="icon">🖥</span> 13. Deploy Azure VMs in a Network</h2>
-    <p>Here's how to deploy a Virtual Machine inside your Azure VNet, step by step.</p>
-
-    <h3 class="sub-title">Prerequisites — Build the Network First</h3>
-    <div class="steps">
-      <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Create a Resource Group</h4><p>Portal → Resource Groups → + Create → Name: <code>rg-myapp</code>, Region: <code>East US</code> → Review + Create</p></div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Create a Virtual Network</h4><p>Portal → Virtual Networks → + Create → VNet name: <code>vnet-myapp</code>, Address space: <code>10.0.0.0/16</code></p></div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Add Subnets</h4><p>Inside VNet → Subnets → + Subnet → Name: <code>snet-web</code>, Range: <code>10.0.1.0/24</code>. Repeat for app (<code>10.0.2.0/24</code>) and db (<code>10.0.3.0/24</code>).</p></div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Create NSG</h4><p>Portal → Network Security Groups → + Create → Name: <code>nsg-web</code>. Add inbound rule: Allow TCP port 80 from Internet. Deny all else.</p></div></div>
-      <div class="step"><div class="step-num">5</div><div class="step-body"><h4>Associate NSG with Subnet</h4><p>In the NSG → Settings → Subnets → Associate → pick <code>snet-web</code>.</p></div></div>
-    </div>
-
-    <h3 class="sub-title">Deploy a VM Into the Network</h3>
-    <div class="steps">
-      <div class="step"><div class="step-num">6</div><div class="step-body"><h4>Create Virtual Machine</h4><p>Portal → Virtual Machines → + Create → Azure Virtual Machine</p></div></div>
-      <div class="step"><div class="step-num">7</div><div class="step-body"><h4>Basics Tab</h4><p>Resource Group: <code>rg-myapp</code> · VM Name: <code>vm-web01</code> · Region: <code>East US</code> · Image: Ubuntu 22.04 LTS · Size: Standard_B1s · Auth: SSH key or password</p></div></div>
-      <div class="step"><div class="step-num">8</div><div class="step-body"><h4>Networking Tab ← Most Important</h4><p>Virtual Network: <code>vnet-myapp</code> · Subnet: <code>snet-web (10.0.1.0/24)</code> · Public IP: Create new (or None for private-only) · NIC NSG: select existing NSG <code>nsg-web</code></p></div></div>
-      <div class="step"><div class="step-num">9</div><div class="step-body"><h4>Review + Create</h4><p>Azure validates → click Create. VM gets private IP (e.g., <code>10.0.1.4</code>) from subnet's DHCP pool automatically.</p></div></div>
-      <div class="step"><div class="step-num">10</div><div class="step-body"><h4>Connect to VM</h4><p>Via public IP using SSH: <code>ssh azureuser@&lt;public-ip&gt;</code>. Or use Azure Bastion for browser-based access without opening port 22 to internet.</p></div></div>
-    </div>
-
-    <div class="callout green">
-      ✅ <strong>Result:</strong> Your VM (<code>vm-web01</code>) is now deployed with private IP <code>10.0.1.4</code> inside <code>snet-web</code>, protected by <code>nsg-web</code>, reachable on port 80 from the internet through its public IP or a Load Balancer.
-    </div>
-
-    <h3 class="sub-title">Private IP Assignment Summary</h3>
-    <table>
-      <tr><th>Resource</th><th>IP</th><th>Subnet</th><th>Role</th></tr>
-      <tr><td>vm-web01</td><td>10.0.1.4</td><td>snet-web</td><td>Web server (port 80)</td></tr>
-      <tr><td>vm-web02</td><td>10.0.1.5</td><td>snet-web</td><td>Web server (port 80)</td></tr>
-      <tr><td>vm-app01</td><td>10.0.2.4</td><td>snet-app</td><td>App server (port 8080)</td></tr>
-      <tr><td>vm-db01</td><td>10.0.3.4</td><td>snet-db</td><td>Database (port 1433)</td></tr>
-      <tr><td>Azure reserved</td><td>.0, .1, .2, .3, .255</td><td>each subnet</td><td>Network/GW/DNS/Broadcast</td></tr>
-    </table>
-
-    <div class="callout orange">⚠️ <strong>Security best practice:</strong> Never expose the DB subnet to the internet. NSG on <code>snet-db</code> should only allow inbound traffic from <code>10.0.2.0/24</code> (the app subnet). The web subnet only needs port 80/443 open. The app subnet only accepts traffic from the web subnet.</div>
-  </div>
-
-  <div style="height:60px"></div>
-
 </div>
 
-<script>
-  // Highlight active nav link on scroll
-  const sections = document.querySelectorAll('.section');
-  const links = document.querySelectorAll('#sidebar a');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        links.forEach(l => l.classList.remove('active'));
-        const active = document.querySelector(`#sidebar a[href="#${e.target.id}"]`);
-        if (active) active.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-30% 0px -60% 0px' });
-  sections.forEach(s => obs.observe(s));
+<!-- ═══ C1: NETWORKS ═══ -->
+<div class="chapter" id="c1">
+  <div class="ch-header"><div class="ch-num">1</div><h2 class="ch-title">What is a Network?</h2></div>
+  <p class="ch-desc">The absolute foundation — understand what networks are, why they exist, and how data travels.</p>
 
-  // Smooth scroll
-  links.forEach(l => l.addEventListener('click', e => {
-    e.preventDefault();
-    document.querySelector(l.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
-  }));
+  <p>A <strong>computer network</strong> is two or more devices connected so they can exchange data and share resources. Every cloud concept — including all of Azure — is built on top of these fundamentals.</p>
+
+  <div class="grid g3">
+    <div class="card blue"><h4>📤 Communication</h4><p>Send emails, stream video, make calls. Data broken into packets, routed, reassembled at destination.</p></div>
+    <div class="card teal"><h4>🗄 Resource Sharing</h4><p>Share printers, storage, internet connections. One physical resource serves many users.</p></div>
+    <div class="card purple"><h4>☁ Cloud Foundation</h4><p>Azure, AWS, GCP are giant networks of networks. Every VM, database, and API call travels over network infrastructure.</p></div>
+  </div>
+
+  <h3 class="sh">OSI Model — The 7-Layer Framework</h3>
+  <p>All networking follows the <strong>OSI model</strong> — 7 layers that each handle a specific job. Azure services map to these layers.</p>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>Layer</th><th>Name</th><th>Function</th><th>Protocols / Devices</th><th>Azure Mapping</th></tr>
+    <tr><td>7</td><td><strong>Application</strong></td><td>User-facing apps, HTTP, DNS queries</td><td>HTTP, HTTPS, DNS, FTP, SMTP</td><td>App Gateway, Front Door</td></tr>
+    <tr><td>6</td><td><strong>Presentation</strong></td><td>Encoding, encryption, compression</td><td>TLS/SSL, JPEG, MPEG</td><td>TLS termination at App Gateway</td></tr>
+    <tr><td>5</td><td><strong>Session</strong></td><td>Establish, manage, terminate sessions</td><td>NetBIOS, RPC, SMB</td><td>—</td></tr>
+    <tr><td>4</td><td><strong>Transport</strong></td><td>End-to-end communication, port numbers</td><td>TCP, UDP</td><td>Azure Load Balancer (L4)</td></tr>
+    <tr><td>3</td><td><strong>Network</strong></td><td>Logical addressing, routing</td><td>IP, ICMP, OSPF, BGP</td><td>Router, VNet routing, ExpressRoute</td></tr>
+    <tr><td>2</td><td><strong>Data Link</strong></td><td>Physical addressing (MAC), frames</td><td>Ethernet, 802.11 WiFi</td><td>Azure Switch fabric</td></tr>
+    <tr><td>1</td><td><strong>Physical</strong></td><td>Bits over wire/fibre/radio</td><td>Ethernet cable, Fibre, Radio</td><td>Azure DC physical hardware</td></tr>
+  </table></div>
+
+  <h3 class="sh">Physical Data Centre Layout</h3>
+  <div class="dbox">
+    <svg viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:780px">
+      <!-- Internet -->
+      <ellipse cx="390" cy="35" rx="120" ry="28" fill="#0a1830" stroke="#4f8ef7" stroke-width="2"/>
+      <text x="390" y="40" text-anchor="middle" fill="#4f8ef7" font-size="13" font-weight="800">🌐 INTERNET</text>
+      <line x1="390" y1="63" x2="390" y2="105" stroke="#4f8ef7" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- ISP Router -->
+      <rect x="300" y="105" width="180" height="48" rx="10" fill="#0d2040" stroke="#4f8ef7" stroke-width="2"/>
+      <text x="390" y="126" text-anchor="middle" fill="#7ab8ff" font-size="13" font-weight="700">🔀 Edge / ISP Router</text>
+      <text x="390" y="143" text-anchor="middle" fill="#4a6a8a" font-size="10">BGP, Default Route, WAN interface</text>
+      <!-- Firewall -->
+      <line x1="390" y1="153" x2="390" y2="185" stroke="#f7934f" stroke-width="2"/>
+      <rect x="300" y="185" width="180" height="44" rx="9" fill="#2a1500" stroke="#f7934f" stroke-width="2"/>
+      <text x="390" y="204" text-anchor="middle" fill="#ffb068" font-size="13" font-weight="700">🛡 Perimeter Firewall</text>
+      <text x="390" y="220" text-anchor="middle" fill="#7a5030" font-size="10">DMZ, NAT, ACLs, IPS/IDS</text>
+      <!-- Core Switch -->
+      <line x1="390" y1="229" x2="390" y2="263" stroke="#00c9a7" stroke-width="2"/>
+      <rect x="300" y="263" width="180" height="44" rx="9" fill="#0d2d1a" stroke="#00c9a7" stroke-width="2"/>
+      <text x="390" y="282" text-anchor="middle" fill="#4fd1b8" font-size="13" font-weight="700">🔀 Core L3 Switch</text>
+      <text x="390" y="298" text-anchor="middle" fill="#336655" font-size="10">VLAN routing, STP, Link Aggregation</text>
+      <!-- Distribution lines -->
+      <line x1="390" y1="307" x2="170" y2="350" stroke="#4f8ef7" stroke-width="1.5"/>
+      <line x1="390" y1="307" x2="390" y2="350" stroke="#4f8ef7" stroke-width="1.5"/>
+      <line x1="390" y1="307" x2="610" y2="350" stroke="#4f8ef7" stroke-width="1.5"/>
+      <!-- Server Switch -->
+      <rect x="80" y="350" width="160" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
+      <text x="160" y="367" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">L2 Switch — Servers</text>
+      <text x="160" y="382" text-anchor="middle" fill="#336655" font-size="9">VLAN 10: 10.0.1.0/24</text>
+      <!-- Client Switch -->
+      <rect x="310" y="350" width="160" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
+      <text x="390" y="367" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">L2 Switch — Clients</text>
+      <text x="390" y="382" text-anchor="middle" fill="#336655" font-size="9">VLAN 20: 10.0.2.0/24</text>
+      <!-- Storage Switch -->
+      <rect x="540" y="350" width="160" height="40" rx="7" fill="#1a1030" stroke="#7c5cfc" stroke-width="1.5"/>
+      <text x="620" y="367" text-anchor="middle" fill="#c4a6ff" font-size="11" font-weight="700">SAN Switch — Storage</text>
+      <text x="620" y="382" text-anchor="middle" fill="#5a4080" font-size="9">VLAN 30: 10.0.3.0/24</text>
+      <!-- Server nodes -->
+      <line x1="110" y1="390" x2="100" y2="425" stroke="#4f8ef7" stroke-width="1.2"/>
+      <line x1="160" y1="390" x2="160" y2="425" stroke="#4f8ef7" stroke-width="1.2"/>
+      <line x1="210" y1="390" x2="220" y2="425" stroke="#4f8ef7" stroke-width="1.2"/>
+      <rect x="66" y="425" width="74" height="36" rx="5" fill="#0a1828" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="103" y="441" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 Web Srv</text>
+      <text x="103" y="454" text-anchor="middle" fill="#3a5070" font-size="9">10.0.1.4</text>
+      <rect x="124" y="425" width="74" height="36" rx="5" fill="#0a1828" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="161" y="441" text-anchor="middle" fill="#7ab8ff" font-size="10">🗄 DB Srv</text>
+      <text x="161" y="454" text-anchor="middle" fill="#3a5070" font-size="9">10.0.1.5</text>
+      <rect x="183" y="425" width="74" height="36" rx="5" fill="#0a1828" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="220" y="441" text-anchor="middle" fill="#7ab8ff" font-size="10">📁 File Srv</text>
+      <text x="220" y="454" text-anchor="middle" fill="#3a5070" font-size="9">10.0.1.6</text>
+      <!-- Client nodes -->
+      <line x1="340" y1="390" x2="335" y2="425" stroke="#7c5cfc" stroke-width="1.2"/>
+      <line x1="390" y1="390" x2="390" y2="425" stroke="#7c5cfc" stroke-width="1.2"/>
+      <line x1="440" y1="390" x2="445" y2="425" stroke="#7c5cfc" stroke-width="1.2"/>
+      <rect x="305" y="425" width="66" height="36" rx="5" fill="#100d20" stroke="#7c5cfc" stroke-width="1"/>
+      <text x="338" y="441" text-anchor="middle" fill="#c4a6ff" font-size="10">💻 PC-01</text>
+      <rect x="359" y="425" width="66" height="36" rx="5" fill="#100d20" stroke="#7c5cfc" stroke-width="1"/>
+      <text x="392" y="441" text-anchor="middle" fill="#c4a6ff" font-size="10">💻 PC-02</text>
+      <rect x="413" y="425" width="66" height="36" rx="5" fill="#100d20" stroke="#7c5cfc" stroke-width="1"/>
+      <text x="446" y="441" text-anchor="middle" fill="#c4a6ff" font-size="10">💻 PC-03</text>
+      <!-- Storage -->
+      <line x1="620" y1="390" x2="620" y2="425" stroke="#7c5cfc" stroke-width="1.5"/>
+      <rect x="560" y="425" width="120" height="36" rx="5" fill="#100d20" stroke="#7c5cfc" stroke-width="1"/>
+      <text x="620" y="441" text-anchor="middle" fill="#c4a6ff" font-size="10">🗃 SAN / NAS</text>
+      <text x="620" y="456" text-anchor="middle" fill="#5a4080" font-size="9">Shared Storage</text>
+    </svg>
+  </div>
+  <p class="dlabel">▲ Physical Data Centre: Internet → Edge Router → Firewall → Core L3 Switch → Distribution Switches → Servers / Clients / Storage</p>
+</div>
+
+<!-- ═══ C2: LAN/WAN ═══ -->
+<div class="chapter" id="c2">
+  <div class="ch-header"><div class="ch-num">2</div><h2 class="ch-title">LAN / WAN / MAN / WLAN / VLAN — Complete Guide</h2></div>
+  <p class="ch-desc">Network types classified by geography, medium, and logical segmentation.</p>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>Type</th><th>Full Name</th><th>Coverage</th><th>Speed</th><th>Example</th><th>Azure Equivalent</th></tr>
+    <tr><td><strong>LAN</strong></td><td>Local Area Network</td><td>Single building/floor</td><td>1–100 Gbps</td><td>Office network</td><td>Azure VNet (single region)</td></tr>
+    <tr><td><strong>WAN</strong></td><td>Wide Area Network</td><td>Cities / Countries</td><td>Mbps–Gbps</td><td>Internet, MPLS, leased lines</td><td>ExpressRoute, VPN Gateway</td></tr>
+    <tr><td><strong>MAN</strong></td><td>Metropolitan Area Network</td><td>City-wide</td><td>Gbps</td><td>City ISP backbone</td><td>Azure regional backbone</td></tr>
+    <tr><td><strong>WLAN</strong></td><td>Wireless LAN</td><td>Wireless LAN</td><td>Up to 9.6 Gbps (Wi-Fi 6)</td><td>Office Wi-Fi</td><td>—</td></tr>
+    <tr><td><strong>VLAN</strong></td><td>Virtual LAN</td><td>Logical segment</td><td>Same as physical</td><td>HR VLAN, Finance VLAN</td><td>Azure Subnet</td></tr>
+    <tr><td><strong>SD-WAN</strong></td><td>Software-Defined WAN</td><td>Multi-site WAN</td><td>Variable</td><td>Branch office links</td><td>Azure Virtual WAN</td></tr>
+    <tr><td><strong>PAN</strong></td><td>Personal Area Network</td><td>~10 metres</td><td>Mbps</td><td>Bluetooth, NFC</td><td>—</td></tr>
+  </table></div>
+
+  <h3 class="sh">WAN Technologies Deep Dive</h3>
+  <div class="grid g2">
+    <div class="card blue"><h4>MPLS (Multi-Protocol Label Switching)</h4><p>Labels packets instead of IP routing. Deterministic paths, low latency, used by enterprises for site-to-site WAN. Azure bridges via ExpressRoute.</p></div>
+    <div class="card teal"><h4>Leased Line / Dedicated Circuit</h4><p>Private physical circuit between two sites. Always-on, guaranteed bandwidth. Expensive but very reliable. Basis of ExpressRoute.</p></div>
+    <div class="card purple"><h4>Internet VPN (IPsec)</h4><p>Encrypts traffic over public internet. Cheaper than leased lines. Used for Azure S2S VPN Gateway connections.</p></div>
+    <div class="card orange"><h4>SD-WAN</h4><p>Centralised control over multiple WAN links. Intelligent path selection. Azure Virtual WAN is Microsoft's SD-WAN service.</p></div>
+  </div>
+
+  <h3 class="sh">VLAN — Virtual LAN</h3>
+  <p>VLANs logically segment a physical network into isolated broadcast domains. Devices in different VLANs cannot communicate without a Layer-3 router (or L3 switch).</p>
+  <div class="dbox">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px">
+      <rect x="20" y="20" width="660" height="180" rx="12" fill="#0a0c14" stroke="#2e3260" stroke-width="1"/>
+      <text x="360" y="42" text-anchor="middle" fill="#4a5080" font-size="11" font-weight="700">SINGLE PHYSICAL SWITCH — Multiple Logical VLANs</text>
+      <!-- Switch -->
+      <rect x="280" y="55" width="140" height="36" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="2"/>
+      <text x="350" y="78" text-anchor="middle" fill="#4fd1b8" font-size="12" font-weight="700">L2/L3 Switch</text>
+      <!-- VLAN 10 -->
+      <line x1="310" y1="91" x2="150" y2="135" stroke="#4f8ef7" stroke-width="1.5"/>
+      <rect x="60" y="135" width="180" height="50" rx="7" fill="#0a1830" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="150" y="157" text-anchor="middle" fill="#7ab8ff" font-size="12" font-weight="700">VLAN 10 — HR</text>
+      <text x="150" y="174" text-anchor="middle" fill="#4a6080" font-size="10">192.168.10.0/24 | Tag: 10</text>
+      <!-- VLAN 20 -->
+      <line x1="390" y1="91" x2="550" y2="135" stroke="#f7934f" stroke-width="1.5"/>
+      <rect x="460" y="135" width="180" height="50" rx="7" fill="#1e1000" stroke="#f7934f" stroke-width="1.5"/>
+      <text x="550" y="157" text-anchor="middle" fill="#ffb068" font-size="12" font-weight="700">VLAN 20 — Finance</text>
+      <text x="550" y="174" text-anchor="middle" fill="#7a5030" font-size="10">192.168.20.0/24 | Tag: 20</text>
+      <!-- VLAN 30 -->
+      <line x1="350" y1="91" x2="350" y2="135" stroke="#7c5cfc" stroke-width="1.5"/>
+      <rect x="270" y="135" width="160" height="50" rx="7" fill="#120d20" stroke="#7c5cfc" stroke-width="1.5"/>
+      <text x="350" y="157" text-anchor="middle" fill="#c4a6ff" font-size="12" font-weight="700">VLAN 30 — Servers</text>
+      <text x="350" y="174" text-anchor="middle" fill="#5a4080" font-size="10">192.168.30.0/24 | Tag: 30</text>
+    </svg>
+  </div>
+  <div class="callout">💡 In Azure, <strong>Subnets</strong> serve the same purpose as VLANs — logical segmentation within a VNet. NSGs provide the access control equivalent of VLAN ACLs.</div>
+</div>
+
+<!-- ═══ C3: ROUTERS & SWITCHES ═══ -->
+<div class="chapter" id="c3">
+  <div class="ch-header"><div class="ch-num">3</div><h2 class="ch-title">Routers & Switches — Deep Dive</h2></div>
+  <p class="ch-desc">Understand how routers make path decisions and how switches learn and forward frames.</p>
+
+  <h3 class="sh">Router — Layer 3 Device</h3>
+  <p>A router connects <em>different networks</em> and decides the best path for packets based on destination IP addresses and routing tables.</p>
+  <h4 class="ssh">Routing Table Components</h4>
+  <div class="tbl-wrap"><table>
+    <tr><th>Column</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>Destination</td><td>Target network/host</td><td>10.0.2.0/24</td></tr>
+    <tr><td>Next Hop</td><td>Next router to forward to</td><td>192.168.1.1</td></tr>
+    <tr><td>Interface</td><td>Outgoing port</td><td>eth0</td></tr>
+    <tr><td>Metric</td><td>Path cost (lower = preferred)</td><td>10</td></tr>
+    <tr><td>Protocol</td><td>How route was learned</td><td>BGP / OSPF / Static / Connected</td></tr>
+  </table></div>
+
+  <h4 class="ssh">Routing Protocols</h4>
+  <div class="grid g2">
+    <div class="card blue"><h4>BGP (Border Gateway Protocol)</h4><p>The internet's routing protocol. Path-vector. Used in Azure ExpressRoute and VPN to exchange routes between on-prem and Azure. Protocol 179.</p></div>
+    <div class="card teal"><h4>OSPF (Open Shortest Path First)</h4><p>Link-state IGP. Calculates shortest path using Dijkstra. Common in enterprise networks. Azure uses BGP externally; OSPF stays on-prem.</p></div>
+    <div class="card purple"><h4>Static Routes</h4><p>Manually configured. Used in Azure UDRs (User Defined Routes) to force-route traffic through firewall or NVA.</p></div>
+    <div class="card orange"><h4>Azure System Routes</h4><p>Auto-created by Azure. Every subnet gets default routes: VNet address space, 0.0.0.0/0 (internet), and service tags. Can be overridden by UDRs.</p></div>
+  </div>
+
+  <h3 class="sh">Switch — Layer 2 Device</h3>
+  <p>A switch forwards Ethernet frames based on <strong>MAC addresses</strong>. It learns which MAC is on which port and builds a MAC address table (CAM table).</p>
+  <div class="dbox">
+    <svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:720px">
+      <!-- Switch -->
+      <rect x="250" y="100" width="220" height="60" rx="10" fill="#0d2d1a" stroke="#00c9a7" stroke-width="2"/>
+      <text x="360" y="126" text-anchor="middle" fill="#4fd1b8" font-size="14" font-weight="800">🔀 SWITCH</text>
+      <text x="360" y="148" text-anchor="middle" fill="#336655" font-size="11">CAM Table (MAC → Port)</text>
+      <!-- PC A -->
+      <rect x="30" y="80" width="110" height="50" rx="7" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="85" y="101" text-anchor="middle" fill="#7ab8ff" font-size="12" font-weight="700">💻 PC-A</text>
+      <text x="85" y="120" text-anchor="middle" fill="#3a5070" font-size="10">AA:BB:CC:DD Port 1</text>
+      <line x1="140" y1="105" x2="250" y2="120" stroke="#4f8ef7" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- PC B -->
+      <rect x="580" y="50" width="110" height="50" rx="7" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="635" y="71" text-anchor="middle" fill="#7ab8ff" font-size="12" font-weight="700">🖥 Server-B</text>
+      <text x="635" y="90" text-anchor="middle" fill="#3a5070" font-size="10">11:22:33:44 Port 2</text>
+      <line x1="580" y1="75" x2="470" y2="115" stroke="#00c9a7" stroke-width="1.5"/>
+      <!-- PC C -->
+      <rect x="580" y="160" width="110" height="50" rx="7" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="635" y="181" text-anchor="middle" fill="#7ab8ff" font-size="12" font-weight="700">💻 PC-C</text>
+      <text x="635" y="200" text-anchor="middle" fill="#3a5070" font-size="10">55:66:77:88 Port 3</text>
+      <line x1="580" y1="185" x2="470" y2="145" stroke="#7c5cfc" stroke-width="1.5"/>
+      <!-- CAM box -->
+      <rect x="30" y="175" width="200" height="75" rx="7" fill="#050810" stroke="#1a3020" stroke-width="1"/>
+      <text x="130" y="194" text-anchor="middle" fill="#00c9a7" font-size="11" font-weight="700">CAM Table</text>
+      <text x="130" y="211" text-anchor="middle" fill="#336655" font-size="10">AA:BB:CC:DD → Port 1</text>
+      <text x="130" y="227" text-anchor="middle" fill="#336655" font-size="10">11:22:33:44 → Port 2</text>
+      <text x="130" y="243" text-anchor="middle" fill="#336655" font-size="10">55:66:77:88 → Port 3</text>
+    </svg>
+  </div>
+  <div class="callout green">💡 <strong>Hub vs Switch:</strong> A hub broadcasts to ALL ports — Switch sends only to the correct port based on MAC. This is why switches are used in all modern networks.</div>
+</div>
+
+<!-- ═══ C4: IP ADDRESSING ═══ -->
+<div class="chapter" id="c4">
+  <div class="ch-header"><div class="ch-num">4</div><h2 class="ch-title">IP Addressing — IPv4 & IPv6</h2></div>
+  <p class="ch-desc">Numerical addressing system that identifies every device on a network.</p>
+
+  <h3 class="sh">IPv4 Structure</h3>
+  <p>IPv4 is 32 bits, split into 4 octets (8 bits each), written in dotted-decimal.</p>
+  <div style="text-align:center;padding:16px 0">
+    <div class="ip-octet">
+      <span class="oct net">192</span><span class="oct-dot">.</span>
+      <span class="oct net">168</span><span class="oct-dot">.</span>
+      <span class="oct host">1</span><span class="oct-dot">.</span>
+      <span class="oct host">100</span>
+    </div>
+    <div style="display:flex;justify-content:center;gap:60px;margin-top:8px">
+      <span style="font-size:12px;color:#4f8ef7">◀── Network Part ──▶</span>
+      <span style="font-size:12px;color:#00c9a7">◀─ Host Part ─▶</span>
+    </div>
+  </div>
+  <pre>Decimal:  192      .  168      .  1        .  100
+Binary:   11000000 . 10101000 . 00000001 . 01100100
+Subnet:   11111111 . 11111111 . 11111111 . 00000000  (/24)
+          ← Network bits (24) →           ← Host bits (8) →</pre>
+
+  <h3 class="sh">Special IP Ranges</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Range</th><th>Type</th><th>Purpose</th><th>Azure Usage</th></tr>
+    <tr><td>10.0.0.0/8</td><td>Private</td><td>Large corporate networks</td><td>Typical VNet address space</td></tr>
+    <tr><td>172.16.0.0/12</td><td>Private</td><td>Medium corporate networks</td><td>VNet address space</td></tr>
+    <tr><td>192.168.0.0/16</td><td>Private</td><td>Home/small office</td><td>VNet address space</td></tr>
+    <tr><td>127.0.0.0/8</td><td>Loopback</td><td>Device talks to itself</td><td>Not used in Azure</td></tr>
+    <tr><td>169.254.0.0/16</td><td>APIPA/Link-local</td><td>Auto-assigned when DHCP fails</td><td>169.254.169.254 = Azure IMDS</td></tr>
+    <tr><td>0.0.0.0/0</td><td>Default route</td><td>Catch-all / internet route</td><td>UDR to force-tunnel internet</td></tr>
+    <tr><td>255.255.255.255</td><td>Broadcast</td><td>Limited broadcast</td><td>Not supported in Azure</td></tr>
+  </table></div>
+
+  <h3 class="sh">IPv6 — Key Facts for AZ-700</h3>
+  <div class="grid g2">
+    <div class="card blue"><h4>128-bit addressing</h4><p>Written as 8 groups of 4 hex digits: <code>2001:0db8:85a3::8a2e:0370:7334</code>. Virtually unlimited addresses (3.4×10³⁸).</p></div>
+    <div class="card teal"><h4>Azure IPv6 Support</h4><p>Azure VNets support dual-stack (IPv4 + IPv6). NSGs, Load Balancers, and VMs all support IPv6. ExpressRoute supports IPv6 peering.</p></div>
+  </div>
+</div>
+
+<!-- ═══ C5: IP CLASSES ═══ -->
+<div class="chapter" id="c5">
+  <div class="ch-header"><div class="ch-num">5</div><h2 class="ch-title">IP Address Classes A–E</h2></div>
+  <p class="ch-desc">Classful addressing — legacy but foundational for understanding default masks and ranges.</p>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>Class</th><th>First Octet Range</th><th>First Bits</th><th>Default Mask</th><th>Network / Host bits</th><th>Max Hosts/Net</th><th>Purpose</th></tr>
+    <tr><td><strong style="color:#7ab8ff">A</strong></td><td>1 – 126</td><td>0xxx xxxx</td><td>255.0.0.0 /8</td><td>8 / 24</td><td>16,777,214</td><td>Huge ISPs, militaries (IANA legacy)</td></tr>
+    <tr><td><strong style="color:#4fd1b8">B</strong></td><td>128 – 191</td><td>10xx xxxx</td><td>255.255.0.0 /16</td><td>16 / 16</td><td>65,534</td><td>Large universities, corporations</td></tr>
+    <tr><td><strong style="color:#ffb068">C</strong></td><td>192 – 223</td><td>110x xxxx</td><td>255.255.255.0 /24</td><td>24 / 8</td><td>254</td><td>Small offices, most common</td></tr>
+    <tr><td><strong style="color:#c4a6ff">D</strong></td><td>224 – 239</td><td>1110 xxxx</td><td>N/A</td><td>N/A</td><td>N/A</td><td>Multicast (OSPF, PIM, streaming)</td></tr>
+    <tr><td><strong style="color:#888">E</strong></td><td>240 – 255</td><td>1111 xxxx</td><td>N/A</td><td>N/A</td><td>N/A</td><td>Experimental / Reserved</td></tr>
+  </table></div>
+  <div class="callout orange">⚠️ 127.x.x.x is reserved for loopback — it appears to be Class A but is excluded. Modern networking uses <strong>CIDR</strong> which ignores class boundaries entirely.</div>
+
+  <h3 class="sh">Private Address Ranges (RFC 1918)</h3>
+  <pre>Class A Private:  10.0.0.0     – 10.255.255.255   /8   (16M hosts)
+Class B Private:  172.16.0.0   – 172.31.255.255   /12  (1M hosts)
+Class C Private:  192.168.0.0  – 192.168.255.255  /16  (65K hosts)</pre>
+  <div class="callout green">💡 All Azure VNet address spaces should use RFC 1918 private ranges. These are not routable on the public internet — NAT or Azure Public IP is needed for internet access.</div>
+</div>
+
+<!-- ═══ C6: SUBNET & CIDR ═══ -->
+<div class="chapter" id="c6">
+  <div class="ch-header"><div class="ch-num">6</div><h2 class="ch-title">Subnet Mask & CIDR — Complete Calculation Guide</h2></div>
+  <p class="ch-desc">Master subnetting — the skill that underpins all Azure network design.</p>
+
+  <h3 class="sh">Subnet Mask Reference Table</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>CIDR</th><th>Subnet Mask</th><th>Total IPs</th><th>Usable Hosts</th><th>Use Case</th></tr>
+    <tr><td>/8</td><td>255.0.0.0</td><td>16,777,216</td><td>16,777,214</td><td>Massive enterprise/cloud</td></tr>
+    <tr><td>/16</td><td>255.255.0.0</td><td>65,536</td><td>65,534</td><td>Azure VNet address space</td></tr>
+    <tr><td>/24</td><td>255.255.255.0</td><td>256</td><td>251 in Azure (−5)</td><td>Standard subnet</td></tr>
+    <tr><td>/25</td><td>255.255.255.128</td><td>128</td><td>123 in Azure</td><td>Medium subnet</td></tr>
+    <tr><td>/26</td><td>255.255.255.192</td><td>64</td><td>59 in Azure</td><td>Small subnet</td></tr>
+    <tr><td>/27</td><td>255.255.255.224</td><td>32</td><td>27 in Azure</td><td>App subnet</td></tr>
+    <tr><td>/28</td><td>255.255.255.240</td><td>16</td><td>11 in Azure</td><td>Azure minimum subnet</td></tr>
+    <tr><td>/29</td><td>255.255.255.248</td><td>8</td><td>3 in Azure</td><td>Very small, near minimum</td></tr>
+    <tr><td>/30</td><td>255.255.255.252</td><td>4</td><td>2</td><td>Point-to-point links</td></tr>
+    <tr><td>/32</td><td>255.255.255.255</td><td>1</td><td>1</td><td>Host route (NSG source, etc.)</td></tr>
+  </table></div>
+
+  <div class="formula">Usable Hosts = 2^(32 − prefix) − 2 &nbsp;|&nbsp; Azure Usable = 2^(32 − prefix) − 5</div>
+
+  <h3 class="sh">CIDR Subnetting — Worked Example</h3>
+  <div class="callout purple"><strong>Problem:</strong> You have <code>10.0.0.0/22</code>. Find: network address, broadcast, host range, total IPs, and how to split into 4 equal subnets.</div>
+  <pre>Given:   10.0.0.0/22
+Bits:    32 - 22 = 10 host bits
+Total:   2^10 = 1024 addresses
+Usable:  1022 hosts  (Azure: 1019)
+
+Network:   10.0.0.0
+Broadcast: 10.0.3.255
+First Host: 10.0.0.1
+Last Host:  10.0.3.254
+
+── Split into 4 subnets (borrow 2 bits → /24) ──
+Subnet 1:  10.0.0.0/24  → 10.0.0.1  – 10.0.0.254
+Subnet 2:  10.0.1.0/24  → 10.0.1.1  – 10.0.1.254
+Subnet 3:  10.0.2.0/24  → 10.0.2.1  – 10.0.2.254
+Subnet 4:  10.0.3.0/24  → 10.0.3.1  – 10.0.3.254
+
+Block size = 256 - subnet_mask_last_octet
+/24 → 256 - 0 = 256  │  /25 → 256-128=128  │  /26 → 256-192=64</pre>
+
+  <h3 class="sh">Azure Reserved IPs in Every Subnet</h3>
+  <div class="grid g3">
+    <div class="card blue"><h4>.0 — Network Address</h4><p>Identifies the subnet itself. Cannot be assigned to a VM.</p></div>
+    <div class="card blue"><h4>.1 — Default Gateway</h4><p>Reserved for Azure's default gateway / router for the subnet.</p></div>
+    <div class="card blue"><h4>.2 & .3 — Azure DNS</h4><p>Reserved for Azure DNS service addresses mapped to the virtual network.</p></div>
+    <div class="card blue"><h4>.255 — Broadcast</h4><p>Broadcast address. Azure doesn't support broadcast but reserves this IP.</p></div>
+    <div class="card teal"><h4>Minimum Subnet Size</h4><p><strong>/28</strong> = 16 IPs − 5 reserved = 11 usable. This is Azure's minimum recommended subnet size.</p></div>
+    <div class="card orange"><h4>Gateway Subnet</h4><p>VPN/ExpressRoute Gateway subnet needs at least <strong>/27</strong> for redundancy. Microsoft recommends /27 or /26.</p></div>
+  </div>
+</div>
+
+<!-- ═══ C7: AZURE VNET ═══ -->
+<div class="chapter" id="c7">
+  <div class="ch-header"><div class="ch-num">7</div><h2 class="ch-title">Azure Virtual Network (VNet) — Deep Dive</h2></div>
+  <p class="ch-desc">The core isolation boundary in Azure. Everything lives inside a VNet.</p>
+
+  <p>An <strong>Azure Virtual Network (VNet)</strong> is an isolated, private network in Azure. It provides:
+  segmentation, routing, name resolution, and connectivity to internet, on-prem, and other Azure services.</p>
+
+  <div class="grid g2">
+    <div class="card blue"><h4>🌐 Address Space</h4><p>One or more CIDR blocks (e.g., <code>10.0.0.0/16</code>). Can have multiple, non-overlapping ranges. Must not overlap with on-prem or peered VNets.</p></div>
+    <div class="card teal"><h4>📍 Region-Scoped</h4><p>A VNet lives in ONE Azure region. For multi-region, use VNet Peering or Virtual WAN. A subscription can have up to 1000 VNets per region.</p></div>
+    <div class="card purple"><h4>🔒 Isolation</h4><p>VNets are isolated by default. No traffic flows between VNets unless you explicitly configure Peering, VPN, or ExpressRoute.</p></div>
+    <div class="card orange"><h4>🚀 No Downtime Resize</h4><p>You can add address spaces to a VNet without downtime. However, you cannot shrink or remove a range that is in use by subnets.</p></div>
+  </div>
+
+  <h3 class="sh">VNet Components Overview</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Component</th><th>Function</th><th>Key Settings</th></tr>
+    <tr><td>Address Space</td><td>Defines the total IP range for the VNet</td><td>Use RFC 1918, e.g. 10.0.0.0/8</td></tr>
+    <tr><td>Subnets</td><td>Segments within the VNet</td><td>Min /29, Max /2; no overlap</td></tr>
+    <tr><td>DNS Servers</td><td>Name resolution for VMs</td><td>Default: Azure-provided (168.63.129.16); Custom allowed</td></tr>
+    <tr><td>DDoS Protection</td><td>Volumetric attack mitigation</td><td>Basic (free) or Standard ($$$)</td></tr>
+    <tr><td>Service Endpoints</td><td>Extend VNet identity to PaaS services</td><td>Enabled per subnet per service</td></tr>
+    <tr><td>Private Endpoints</td><td>Bring PaaS service into VNet via private IP</td><td>More secure than service endpoints</td></tr>
+  </table></div>
+</div>
+
+<!-- ═══ C8: SUBNETS & ROUTING ═══ -->
+<div class="chapter" id="c8">
+  <div class="ch-header"><div class="ch-num">8</div><h2 class="ch-title">Subnets & Azure Routing</h2></div>
+  <p class="ch-desc">Designing subnets correctly and controlling traffic flow with route tables.</p>
+
+  <h3 class="sh">Subnet Design Best Practices</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Subnet Name</th><th>Purpose</th><th>Typical CIDR</th><th>Special Rules</th></tr>
+    <tr><td>GatewaySubnet</td><td>VPN/ExpressRoute Gateway</td><td>/27 or /26</td><td>Must be named exactly "GatewaySubnet"</td></tr>
+    <tr><td>AzureFirewallSubnet</td><td>Azure Firewall</td><td>/26 minimum</td><td>Must be named exactly "AzureFirewallSubnet"</td></tr>
+    <tr><td>AzureBastionSubnet</td><td>Azure Bastion</td><td>/26 minimum</td><td>Must be named exactly "AzureBastionSubnet"</td></tr>
+    <tr><td>snet-web / snet-frontend</td><td>Web tier VMs / App Service</td><td>/24 or /25</td><td>Associate NSG; usually has public LB</td></tr>
+    <tr><td>snet-app / snet-mid</td><td>Application tier</td><td>/24 or /25</td><td>NSG; only accepts from web subnet</td></tr>
+    <tr><td>snet-db / snet-data</td><td>Database tier</td><td>/24 or /26</td><td>NSG; only accepts from app subnet</td></tr>
+    <tr><td>snet-mgmt</td><td>Bastion / Jumpbox</td><td>/27 or /28</td><td>Restrict to admin IPs only</td></tr>
+    <tr><td>snet-privateendpoints</td><td>Private Endpoints</td><td>/27 or /28</td><td>Disable network policies for PEs</td></tr>
+  </table></div>
+
+  <h3 class="sh">Azure Default System Routes</h3>
+  <p>Every subnet automatically gets these system routes — they cannot be deleted, only overridden by UDRs.</p>
+  <pre>Destination       Next Hop Type          Notes
+─────────────────────────────────────────────────────
+VNet address      VirtualNetwork         All VNet-to-VNet traffic
+0.0.0.0/0         Internet               Default internet egress
+10.0.0.0/8        None                   Drop private RFC1918 (by default)
+172.16.0.0/12     None                   Drop private RFC1918
+192.168.0.0/16    None                   Drop private RFC1918
+100.64.0.0/10     None                   Drop shared address space</pre>
+
+  <h3 class="sh">User Defined Routes (UDR)</h3>
+  <p>UDRs let you override Azure system routes. Most common use: <strong>force-tunnel</strong> all traffic through Azure Firewall or a Network Virtual Appliance (NVA).</p>
+  <div class="scenario">
+    <div class="sc-title">🎯 Scenario: Force all internet traffic through Azure Firewall</div>
+    <p>All VMs in snet-web should route internet traffic through Azure Firewall (10.0.0.4) before leaving.</p>
+    <div class="solution">
+      <h6>Solution — UDR</h6>
+      <p>1. Create Route Table → Add route: <code>0.0.0.0/0</code> → Next hop: Virtual Appliance → <code>10.0.0.4</code> (Firewall private IP)<br>
+      2. Associate Route Table with <code>snet-web</code><br>
+      3. On Firewall subnet: add route <code>0.0.0.0/0</code> → Internet (prevents routing loop)</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ C9: NSG & ASG ═══ -->
+<div class="chapter" id="c9">
+  <div class="ch-header"><div class="ch-num">9</div><h2 class="ch-title">Network Security Groups (NSG) & Application Security Groups (ASG)</h2></div>
+  <p class="ch-desc">The primary access control mechanism in Azure networking.</p>
+
+  <h3 class="sh">NSG — Network Security Group</h3>
+  <p>An NSG is a <strong>stateful L4 firewall</strong> with inbound and outbound rules. It can be associated with a subnet or a NIC (or both). Rules are evaluated by priority (lower number = higher priority).</p>
+
+  <h4 class="ssh">NSG Rule Properties</h4>
+  <div class="tbl-wrap"><table>
+    <tr><th>Property</th><th>Options</th><th>Notes</th></tr>
+    <tr><td>Priority</td><td>100 – 4096</td><td>Lower number wins. Leave gaps (100, 200, 300) for future rules.</td></tr>
+    <tr><td>Source/Destination</td><td>IP, CIDR, Service Tag, ASG</td><td>Service tags like <code>Internet</code>, <code>VirtualNetwork</code>, <code>AzureLoadBalancer</code></td></tr>
+    <tr><td>Port ranges</td><td>Single port, range, or *</td><td>e.g. 80, 443, 8080-8090, *</td></tr>
+    <tr><td>Protocol</td><td>TCP, UDP, ICMP, Esp, Ah, Any</td><td>—</td></tr>
+    <tr><td>Action</td><td>Allow / Deny</td><td>First match wins</td></tr>
+  </table></div>
+
+  <h4 class="ssh">Default NSG Rules (cannot be deleted)</h4>
+  <div class="tbl-wrap"><table>
+    <tr><th>Priority</th><th>Name</th><th>Source</th><th>Dest</th><th>Port</th><th>Action</th></tr>
+    <tr><td>65000</td><td>AllowVnetInbound</td><td>VirtualNetwork</td><td>VirtualNetwork</td><td>Any</td><td>✅ Allow</td></tr>
+    <tr><td>65001</td><td>AllowAzureLBInbound</td><td>AzureLoadBalancer</td><td>Any</td><td>Any</td><td>✅ Allow</td></tr>
+    <tr><td>65500</td><td>DenyAllInbound</td><td>Any</td><td>Any</td><td>Any</td><td>❌ Deny</td></tr>
+    <tr><td>65000</td><td>AllowVnetOutbound</td><td>VirtualNetwork</td><td>VirtualNetwork</td><td>Any</td><td>✅ Allow</td></tr>
+    <tr><td>65001</td><td>AllowInternetOutbound</td><td>Any</td><td>Internet</td><td>Any</td><td>✅ Allow</td></tr>
+    <tr><td>65500</td><td>DenyAllOutbound</td><td>Any</td><td>Any</td><td>Any</td><td>❌ Deny</td></tr>
+  </table></div>
+
+  <h3 class="sh">Application Security Groups (ASG)</h3>
+  <p>ASGs allow you to group VMs by application role and reference them in NSG rules — without managing individual IP addresses.</p>
+  <div class="callout green">
+    <strong>Example without ASG:</strong> Allow port 80 from <em>10.0.1.4, 10.0.1.5, 10.0.1.6</em> to <em>10.0.2.4, 10.0.2.5</em><br>
+    <strong>Example with ASG:</strong> Allow port 80 from <em>asg-web</em> to <em>asg-app</em> — VMs join ASGs, rules auto-apply.
+  </div>
+
+  <h3 class="sh">NSG vs Azure Firewall</h3>
+  <div class="vs">
+    <div class="vs-col left">
+      <h5>NSG</h5>
+      <p>Layer 4 (TCP/UDP) only · Per subnet or NIC · Free · No logging without NSG Flow Logs · No FQDN filtering · No threat intelligence · Stateful but limited</p>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-col right">
+      <h5>Azure Firewall</h5>
+      <p>Layer 4 + Layer 7 · Centralised in hub VNet · Paid ($$) · Full logging to Log Analytics · FQDN filtering · Threat Intel (deny known bad IPs) · IDPS in Premium SKU</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ C10: AZURE FIREWALL ═══ -->
+<div class="chapter" id="c10">
+  <div class="ch-header"><div class="ch-num">10</div><h2 class="ch-title">Azure Firewall</h2></div>
+  <p class="ch-desc">Fully managed, stateful cloud-native firewall with high availability built in.</p>
+
+  <div class="grid g2">
+    <div class="card blue"><h4>Standard SKU</h4><p>L3–L7 filtering, FQDN rules, threat intelligence, DNAT, SNAT. Sufficient for most enterprise deployments.</p></div>
+    <div class="card purple"><h4>Premium SKU</h4><p>All Standard features + TLS inspection (decrypt/inspect/re-encrypt HTTPS), IDPS (intrusion detection), URL categories, web categories.</p></div>
+  </div>
+
+  <h3 class="sh">Rule Types</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Rule Type</th><th>Layer</th><th>Use Case</th><th>Example</th></tr>
+    <tr><td>DNAT Rules</td><td>L4</td><td>Inbound NAT — translate public IP to internal</td><td>Public:443 → 10.0.1.4:443</td></tr>
+    <tr><td>Network Rules</td><td>L3/L4</td><td>Allow/deny by IP, port, protocol</td><td>Allow 10.0.1.0/24 → 10.0.2.4:1433</td></tr>
+    <tr><td>Application Rules</td><td>L7</td><td>Allow/deny by FQDN, URL, HTTP/HTTPS</td><td>Allow *.microsoft.com on 443</td></tr>
+  </table></div>
+
+  <h3 class="sh">Firewall Policy vs Classic Rules</h3>
+  <div class="callout">💡 Use <strong>Firewall Policy</strong> (recommended) — a dedicated resource that can be shared across multiple firewalls, supports rule inheritance via parent policies, and integrates with Firewall Manager. Classic rules are per-firewall and harder to manage at scale.</div>
+</div>
+
+<!-- ═══ C11: AZURE DNS ═══ -->
+<div class="chapter" id="c11">
+  <div class="ch-header"><div class="ch-num">11</div><h2 class="ch-title">Azure DNS — Public & Private</h2></div>
+  <p class="ch-desc">Name resolution in Azure — from public domains to internal private DNS zones.</p>
+
+  <h3 class="sh">Azure Public DNS</h3>
+  <p>Host your public DNS zones in Azure. Azure DNS uses Microsoft's global anycast network for fast resolution worldwide. You can import existing domains by updating NS records at your registrar.</p>
+  <div class="tbl-wrap"><table>
+    <tr><th>Record Type</th><th>Purpose</th><th>Example</th></tr>
+    <tr><td>A</td><td>Maps hostname to IPv4</td><td>www → 40.112.x.x</td></tr>
+    <tr><td>AAAA</td><td>Maps hostname to IPv6</td><td>www → 2001:db8::1</td></tr>
+    <tr><td>CNAME</td><td>Alias to another hostname</td><td>www → myapp.azurewebsites.net</td></tr>
+    <tr><td>MX</td><td>Mail exchanger</td><td>@ → mail.example.com</td></tr>
+    <tr><td>TXT</td><td>Verification, SPF, DKIM</td><td>v=spf1 include:... ~all</td></tr>
+    <tr><td>NS</td><td>Name servers</td><td>Delegated to Azure NS servers</td></tr>
+    <tr><td>SOA</td><td>Start of Authority</td><td>Auto-created</td></tr>
+    <tr><td>SRV</td><td>Service location</td><td>_sip._tls.domain → server:5061</td></tr>
+    <tr><td>PTR</td><td>Reverse DNS lookup</td><td>40.112.x.x → www.domain.com</td></tr>
+  </table></div>
+
+  <h3 class="sh">Azure Private DNS Zone</h3>
+  <p>Private DNS zones provide name resolution for VMs <em>within</em> a VNet without exposing records publicly.</p>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb2"><h5>Create Private DNS Zone</h5><p>Portal → Private DNS Zones → Create → name: <code>myapp.internal</code> (or any custom domain like <code>corp.contoso.com</code>)</p></div></div>
+    <div class="step"><div class="sn">2</div><div class="sb2"><h5>Link to VNet</h5><p>Add Virtual Network Link → select your VNet → enable <strong>auto-registration</strong> (VMs auto-register their hostnames)</p></div></div>
+    <div class="step"><div class="sn">3</div><div class="sb2"><h5>VMs resolve privately</h5><p><code>vm-web01.myapp.internal</code> resolves to <code>10.0.1.4</code> from any VM in the linked VNet. No public DNS exposure.</p></div></div>
+  </div>
+  <div class="callout green">💡 Azure DNS magic IP: <code>168.63.129.16</code> — this is the virtual IP of Azure's DNS resolver, reachable from any VM in any VNet. Never block this in NSGs if you need name resolution.</div>
+</div>
+
+<!-- ═══ C12: PRIVATE ENDPOINTS ═══ -->
+<div class="chapter" id="c12">
+  <div class="ch-header"><div class="ch-num">12</div><h2 class="ch-title">Private Endpoints</h2></div>
+  <p class="ch-desc">Bring Azure PaaS services into your VNet with a private IP — eliminating public internet exposure.</p>
+
+  <h3 class="sh">What is a Private Endpoint?</h3>
+  <p>A <strong>Private Endpoint</strong> is a network interface with a private IP address from your VNet, mapped to a specific Azure PaaS resource (Storage Account, SQL Database, Key Vault, etc.). Traffic to the PaaS service stays within the Microsoft network — it never traverses the public internet.</p>
+
+  <div class="dbox">
+    <svg viewBox="0 0 740 260" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:740px">
+      <!-- Without -->
+      <text x="180" y="22" text-anchor="middle" fill="#ef5350" font-size="12" font-weight="700">❌ WITHOUT Private Endpoint</text>
+      <rect x="30" y="35" width="100" height="40" rx="7" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="80" y="60" text-anchor="middle" fill="#7ab8ff" font-size="11">🖥 VM</text>
+      <line x1="130" y1="55" x2="165" y2="55" stroke="#ef5350" stroke-width="2" stroke-dasharray="4,2"/>
+      <rect x="165" y="35" width="80" height="40" rx="7" fill="#2a0808" stroke="#ef5350" stroke-width="1.5"/>
+      <text x="205" y="56" text-anchor="middle" fill="#ff8080" font-size="10" font-weight="700">🌐 Internet</text>
+      <line x1="245" y1="55" x2="280" y2="55" stroke="#ef5350" stroke-width="2" stroke-dasharray="4,2"/>
+      <rect x="280" y="35" width="90" height="40" rx="7" fill="#0a1828" stroke="#ef5350" stroke-width="1.5"/>
+      <text x="325" y="56" text-anchor="middle" fill="#ff8080" font-size="11">☁ Storage</text>
+      <text x="205" y="90" text-anchor="middle" fill="#ef5350" font-size="10">Public internet exposure = security risk!</text>
+
+      <!-- With -->
+      <text x="180" y="130" text-anchor="middle" fill="#00c9a7" font-size="12" font-weight="700">✅ WITH Private Endpoint</text>
+      <rect x="30" y="143" width="100" height="40" rx="7" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="80" y="168" text-anchor="middle" fill="#7ab8ff" font-size="11">🖥 VM</text>
+      <line x1="130" y1="163" x2="200" y2="163" stroke="#00c9a7" stroke-width="2"/>
+      <rect x="200" y="143" width="130" height="40" rx="7" fill="#0d3020" stroke="#00c9a7" stroke-width="2"/>
+      <text x="265" y="161" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">🔒 Private Endpoint</text>
+      <text x="265" y="176" text-anchor="middle" fill="#336655" font-size="9">NIC: 10.0.5.4 (private IP)</text>
+      <line x1="330" y1="163" x2="390" y2="163" stroke="#00c9a7" stroke-width="2"/>
+      <rect x="390" y="143" width="120" height="40" rx="7" fill="#0a1828" stroke="#00c9a7" stroke-width="1.5"/>
+      <text x="450" y="165" text-anchor="middle" fill="#4fd1b8" font-size="11">☁ Storage Acct</text>
+      <line x1="510" y1="163" x2="560" y2="163" stroke="#4f8ef7" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <rect x="560" y="143" width="110" height="40" rx="7" fill="#0a1828" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="615" y="161" text-anchor="middle" fill="#7ab8ff" font-size="10">Azure Backbone</text>
+      <text x="615" y="175" text-anchor="middle" fill="#4a6080" font-size="9">Never hits internet</text>
+      <text x="330" y="210" text-anchor="middle" fill="#00c9a7" font-size="10">Private DNS resolves: mystorageacct.blob.core.windows.net → 10.0.5.4</text>
+    </svg>
+  </div>
+
+  <h3 class="sh">Supported Services (Common)</h3>
+  <div class="grid g4">
+    <div class="card teal"><h4>Storage</h4><p>Blob, File, Queue, Table, DFS</p></div>
+    <div class="card teal"><h4>SQL / Cosmos</h4><p>Azure SQL, SQL MI, Cosmos DB</p></div>
+    <div class="card teal"><h4>Key Vault</h4><p>Secrets, keys, certs via private IP</p></div>
+    <div class="card teal"><h4>App Services</h4><p>Web Apps, Function Apps, API Mgmt</p></div>
+  </div>
+
+  <h3 class="sh">Private Endpoint DNS Configuration</h3>
+  <div class="callout purple">
+    <strong>Critical for AZ-700:</strong> When you create a Private Endpoint, you MUST configure DNS so that the public FQDN of the service resolves to the private IP inside your VNet.<br><br>
+    <strong>Example:</strong> <code>mystorageacct.blob.core.windows.net</code> normally resolves to public IP.<br>
+    With PE + Private DNS Zone (<code>privatelink.blob.core.windows.net</code>), it resolves to <code>10.0.5.4</code> inside the VNet.
+  </div>
+
+  <h3 class="sh">DNS Resolution Flow</h3>
+  <pre>VM queries: mystorageacct.blob.core.windows.net
+  → Azure DNS (168.63.129.16)
+  → Resolves CNAME: mystorageacct.privatelink.blob.core.windows.net
+  → Private DNS Zone: privatelink.blob.core.windows.net
+  → Returns: 10.0.5.4 (Private Endpoint IP)
+  → Traffic flows entirely within Azure backbone ✅</pre>
+</div>
+
+<!-- ═══ C13: PRIVATE LINK SERVICE ═══ -->
+<div class="chapter" id="c13">
+  <div class="ch-header"><div class="ch-num">13</div><h2 class="ch-title">Private Link Service</h2></div>
+  <p class="ch-desc">Expose YOUR service privately to other VNets or customers — the provider side of Private Link.</p>
+
+  <div class="vs">
+    <div class="vs-col left">
+      <h5>Private Endpoint (Consumer)</h5>
+      <p>YOU consuming a service (Microsoft PaaS or partner). You create a PE in YOUR VNet. You get a private IP for the remote service.</p>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-col right">
+      <h5>Private Link Service (Provider)</h5>
+      <p>YOU exposing YOUR service to others. You deploy behind a Standard Internal LB. Customers create PEs pointing to your Private Link Service.</p>
+    </div>
+  </div>
+
+  <h3 class="sh">Use Case</h3>
+  <div class="callout green">
+    <strong>ISV / SaaS Scenario:</strong> Contoso builds a multi-tenant API hosted in their Azure VNet. Customers (in their own VNets or subscriptions) connect via Private Endpoint → Contoso's Private Link Service → Contoso's Internal Load Balancer → Contoso's API VMs. Traffic is private, no VNet peering required between Contoso and customer.
+  </div>
+
+  <pre>Customer VNet                    Contoso VNet
+┌────────────────┐               ┌───────────────────────────────┐
+│ Private         │               │ Private Link Service          │
+│ Endpoint (PE)  │──Private──────▶ (NAT IP Pool)                 │
+│ 10.1.5.6       │  Link         │       │                        │
+└────────────────┘               │ Standard Internal LB          │
+                                 │       │                        │
+                                 │   VM-api1   VM-api2            │
+                                 └───────────────────────────────┘</pre>
+</div>
+
+<!-- ═══ C14: SERVICE ENDPOINTS ═══ -->
+<div class="chapter" id="c14">
+  <div class="ch-header"><div class="ch-num">14</div><h2 class="ch-title">Service Endpoints</h2></div>
+  <p class="ch-desc">Extend VNet identity to Azure PaaS services over the Azure backbone — simpler than Private Endpoints.</p>
+
+  <h3 class="sh">Service Endpoint vs Private Endpoint</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Feature</th><th>Service Endpoint</th><th>Private Endpoint</th></tr>
+    <tr><td>Private IP for service</td><td>❌ No — service still has public IP</td><td>✅ Yes — private IP in your VNet</td></tr>
+    <tr><td>Traffic path</td><td>Stays on Azure backbone but exits VNet</td><td>Stays entirely within VNet/backbone</td></tr>
+    <tr><td>DNS change needed</td><td>❌ No</td><td>✅ Yes (private DNS zone)</td></tr>
+    <tr><td>Cost</td><td>Free</td><td>Paid (hourly + data)</td></tr>
+    <tr><td>On-prem access</td><td>❌ Cannot extend to on-prem</td><td>✅ On-prem can reach via ExpressRoute/VPN</td></tr>
+    <tr><td>Granularity</td><td>Per service per subnet</td><td>Per specific resource instance</td></tr>
+    <tr><td>Security</td><td>Good — restricts source subnet</td><td>Best — full network isolation</td></tr>
+  </table></div>
+
+  <div class="callout orange">⚠️ <strong>AZ-700 Tip:</strong> When on-prem connectivity to PaaS is needed → use <strong>Private Endpoints</strong>. Service Endpoints cannot be used from on-prem networks.</div>
+</div>
+
+<!-- ═══ C15: AZURE LOAD BALANCER ═══ -->
+<div class="chapter" id="c15">
+  <div class="ch-header"><div class="ch-num">15</div><h2 class="ch-title">Azure Load Balancer (ALB)</h2></div>
+  <p class="ch-desc">Layer 4 TCP/UDP load balancer for distributing traffic across backend pools.</p>
+
+  <div class="grid g2">
+    <div class="card blue"><h4>Public Load Balancer</h4><p>Frontend has a Public IP. Distributes inbound internet traffic to VMs. Also provides outbound SNAT for backend VMs to reach internet.</p></div>
+    <div class="card teal"><h4>Internal Load Balancer (ILB)</h4><p>Frontend has a Private IP within a VNet. Used for internal workloads — app tier distributing to DB tier, for example.</p></div>
+  </div>
+
+  <h3 class="sh">SKUs Comparison</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Feature</th><th>Basic SKU</th><th>Standard SKU</th></tr>
+    <tr><td>Backend pool size</td><td>300 instances</td><td>1000 instances</td></tr>
+    <tr><td>Availability Zones</td><td>❌ Not zone-redundant</td><td>✅ Zone-redundant</td></tr>
+    <tr><td>SLA</td><td>No SLA</td><td>99.99% SLA</td></tr>
+    <tr><td>HTTPS health probes</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Multiple frontend IPs</td><td>Limited</td><td>✅ Unlimited</td></tr>
+    <tr><td>Secure by default</td><td>❌ Open by default</td><td>✅ Blocked by default (need NSG)</td></tr>
+    <tr><td>Outbound rules</td><td>❌</td><td>✅ Explicit outbound rules</td></tr>
+    <tr><td>HA ports</td><td>❌</td><td>✅ (all ports, all protocols)</td></tr>
+  </table></div>
+  <div class="callout red">⚠️ Basic SKU is being retired. Always use <strong>Standard SKU</strong> for new deployments.</div>
+
+  <h3 class="sh">Load Balancer Components</h3>
+  <div class="grid g3">
+    <div class="card blue"><h4>Frontend IP Configuration</h4><p>The IP address (public or private) that clients connect to. Can have multiple frontends on one LB.</p></div>
+    <div class="card teal"><h4>Backend Pool</h4><p>VMs or VMSS instances that receive traffic. VMs must be in the same VNet. Standard LB supports VMs across availability zones.</p></div>
+    <div class="card purple"><h4>Health Probe</h4><p>Checks if backend instances are healthy. TCP, HTTP, or HTTPS. Unhealthy backends are removed from rotation. Check every 5–15 seconds.</p></div>
+    <div class="card orange"><h4>Load Balancing Rules</h4><p>Maps frontend IP:port to backend pool:port. Session persistence options: None (5-tuple hash), Client IP, Client IP+protocol.</p></div>
+    <div class="card blue"><h4>Inbound NAT Rules</h4><p>Maps a specific port on frontend IP to a specific VM. Used for RDP/SSH access (e.g., frontend:50001 → vm1:3389).</p></div>
+    <div class="card teal"><h4>Outbound Rules</h4><p>Standard SKU: explicitly configure SNAT for backend pool. Avoids SNAT port exhaustion by allocating more ports per instance.</p></div>
+  </div>
+</div>
+
+<!-- ═══ C16: APPLICATION GATEWAY ═══ -->
+<div class="chapter" id="c16">
+  <div class="ch-header"><div class="ch-num">16</div><h2 class="ch-title">Azure Application Gateway</h2></div>
+  <p class="ch-desc">Layer 7 HTTP/HTTPS load balancer with WAF, SSL offload, URL routing, and session affinity.</p>
+
+  <h3 class="sh">Application Gateway vs Load Balancer</h3>
+  <div class="vs">
+    <div class="vs-col left">
+      <h5>Azure Load Balancer</h5>
+      <p>Layer 4 (TCP/UDP) · No HTTP awareness · No URL routing · No SSL termination · No WAF · Cheaper · Sub-millisecond latency</p>
+    </div>
+    <div class="vs-mid">L4 vs L7</div>
+    <div class="vs-col right">
+      <h5>Application Gateway</h5>
+      <p>Layer 7 (HTTP/HTTPS) · URL path routing · Host header routing · SSL/TLS termination and re-encryption · Cookie-based session affinity · WAF · WebSocket support</p>
+    </div>
+  </div>
+
+  <h3 class="sh">Application Gateway Components</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Component</th><th>Role</th><th>Example</th></tr>
+    <tr><td>Listener</td><td>Listens for incoming traffic on port + protocol</td><td>HTTPS:443 on public IP</td></tr>
+    <tr><td>Request Routing Rule</td><td>Connects listener to backend pool via rule type</td><td>Basic or Path-based</td></tr>
+    <tr><td>Backend Pool</td><td>Targets: VMs, VMSS, App Service, IP, FQDN</td><td>vm-web01, vm-web02</td></tr>
+    <tr><td>HTTP Setting</td><td>Port, protocol, timeout, affinity, host override</td><td>Backend: HTTP:80, cookie affinity ON</td></tr>
+    <tr><td>Health Probe</td><td>Custom HTTP/HTTPS probe to backend</td><td>GET /health → expect 200</td></tr>
+    <tr><td>SSL Certificate</td><td>PFX cert for HTTPS termination</td><td>From Key Vault (recommended)</td></tr>
+    <tr><td>WAF Policy</td><td>OWASP rule sets, custom rules, exclusions</td><td>OWASP 3.2, block SQLi, XSS</td></tr>
+  </table></div>
+
+  <h3 class="sh">URL Path-Based Routing Diagram</h3>
+  <div class="dbox">
+    <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:720px">
+      <!-- Client -->
+      <rect x="20" y="110" width="90" height="60" rx="8" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="65" y="137" text-anchor="middle" fill="#7ab8ff" font-size="11">🌐 Client</text>
+      <text x="65" y="155" text-anchor="middle" fill="#3a5070" font-size="9">contoso.com</text>
+      <line x1="110" y1="140" x2="160" y2="140" stroke="#4f8ef7" stroke-width="2"/>
+      <!-- App Gateway -->
+      <rect x="160" y="80" width="160" height="120" rx="10" fill="#0d2040" stroke="#4f8ef7" stroke-width="2"/>
+      <text x="240" y="108" text-anchor="middle" fill="#7ab8ff" font-size="13" font-weight="800">App Gateway</text>
+      <text x="240" y="124" text-anchor="middle" fill="#4a6a8a" font-size="10">WAF + L7 LB</text>
+      <text x="240" y="143" text-anchor="middle" fill="#4fd1b8" font-size="10">/api/* → api-pool</text>
+      <text x="240" y="158" text-anchor="middle" fill="#ffb068" font-size="10">/images/* → img-pool</text>
+      <text x="240" y="173" text-anchor="middle" fill="#c4a6ff" font-size="10">/* → web-pool</text>
+      <!-- Lines to pools -->
+      <line x1="320" y1="130" x2="390" y2="90" stroke="#4fd1b8" stroke-width="1.5"/>
+      <line x1="320" y1="145" x2="390" y2="155" stroke="#ffb068" stroke-width="1.5"/>
+      <line x1="320" y1="160" x2="390" y2="210" stroke="#c4a6ff" stroke-width="1.5"/>
+      <!-- Pools -->
+      <rect x="390" y="60" width="150" height="55" rx="7" fill="#0d3020" stroke="#4fd1b8" stroke-width="1.5"/>
+      <text x="465" y="83" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">API Backend Pool</text>
+      <text x="465" y="100" text-anchor="middle" fill="#336655" font-size="10">vm-api1, vm-api2 :8080</text>
+      <rect x="390" y="128" width="150" height="55" rx="7" fill="#1e1000" stroke="#ffb068" stroke-width="1.5"/>
+      <text x="465" y="151" text-anchor="middle" fill="#ffb068" font-size="11" font-weight="700">Image Backend Pool</text>
+      <text x="465" y="168" text-anchor="middle" fill="#7a5030" font-size="10">cdn-vm1, cdn-vm2 :80</text>
+      <rect x="390" y="185" width="150" height="55" rx="7" fill="#120d20" stroke="#c4a6ff" stroke-width="1.5"/>
+      <text x="465" y="208" text-anchor="middle" fill="#c4a6ff" font-size="11" font-weight="700">Web Backend Pool</text>
+      <text x="465" y="225" text-anchor="middle" fill="#5a4080" font-size="10">vm-web1, vm-web2 :80</text>
+      <!-- SSL badge -->
+      <rect x="165" y="220" width="150" height="22" rx="5" fill="#0a2040" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="240" y="235" text-anchor="middle" fill="#7ab8ff" font-size="10">🔒 SSL Terminated at Gateway</text>
+    </svg>
+  </div>
+
+  <h3 class="sh">SKUs</h3>
+  <div class="grid g2">
+    <div class="card blue"><h4>Standard_v2</h4><p>Auto-scaling, zone redundancy, static VIP. Recommended for all new deployments.</p></div>
+    <div class="card purple"><h4>WAF_v2</h4><p>All Standard_v2 features + Web Application Firewall. Blocks OWASP top 10, custom rules, bot protection, geo-filtering.</p></div>
+  </div>
+</div>
+
+<!-- ═══ C17: FRONT DOOR ═══ -->
+<div class="chapter" id="c17">
+  <div class="ch-header"><div class="ch-num">17</div><h2 class="ch-title">Azure Front Door</h2></div>
+  <p class="ch-desc">Global anycast CDN + WAF + L7 load balancer for multi-region apps.</p>
+
+  <p><strong>Azure Front Door</strong> operates at the edge of Microsoft's global network (150+ PoPs). It accelerates content delivery, provides global load balancing, SSL offload, WAF, and automatic failover across regions.</p>
+
+  <div class="dbox">
+    <svg viewBox="0 0 740 260" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:740px">
+      <!-- Clients in different regions -->
+      <rect x="10" y="50" width="80" height="36" rx="6" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.2"/>
+      <text x="50" y="73" text-anchor="middle" fill="#7ab8ff" font-size="10">👤 India</text>
+      <rect x="10" y="110" width="80" height="36" rx="6" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.2"/>
+      <text x="50" y="133" text-anchor="middle" fill="#7ab8ff" font-size="10">👤 Europe</text>
+      <rect x="10" y="170" width="80" height="36" rx="6" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.2"/>
+      <text x="50" y="193" text-anchor="middle" fill="#7ab8ff" font-size="10">👤 US</text>
+      <!-- Lines to AFD -->
+      <line x1="90" y1="68" x2="200" y2="100" stroke="#4f8ef7" stroke-width="1.5"/>
+      <line x1="90" y1="128" x2="200" y2="128" stroke="#4f8ef7" stroke-width="1.5"/>
+      <line x1="90" y1="188" x2="200" y2="158" stroke="#4f8ef7" stroke-width="1.5"/>
+      <!-- Azure Front Door -->
+      <rect x="200" y="70" width="200" height="120" rx="12" fill="#0d2040" stroke="#4f8ef7" stroke-width="2.5"/>
+      <text x="300" y="100" text-anchor="middle" fill="#4f8ef7" font-size="14" font-weight="800">Azure Front Door</text>
+      <text x="300" y="118" text-anchor="middle" fill="#4a6a8a" font-size="10">🌐 150+ Global PoPs</text>
+      <text x="300" y="133" text-anchor="middle" fill="#4a6a8a" font-size="10">🛡 WAF | 🔒 SSL</text>
+      <text x="300" y="148" text-anchor="middle" fill="#4a6a8a" font-size="10">⚡ Anycast + Caching</text>
+      <text x="300" y="163" text-anchor="middle" fill="#4a6a8a" font-size="10">🔀 URL Routing + Health</text>
+      <!-- Lines to backends -->
+      <line x1="400" y1="100" x2="490" y2="80" stroke="#00c9a7" stroke-width="1.5"/>
+      <line x1="400" y1="128" x2="490" y2="128" stroke="#00c9a7" stroke-width="1.5"/>
+      <line x1="400" y1="158" x2="490" y2="178" stroke="#7c5cfc" stroke-width="1.5"/>
+      <!-- Origin groups -->
+      <rect x="490" y="55" width="140" height="50" rx="7" fill="#0d3020" stroke="#00c9a7" stroke-width="1.5"/>
+      <text x="560" y="77" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">Origin Group 1</text>
+      <text x="560" y="94" text-anchor="middle" fill="#336655" font-size="9">East US App Service (Primary)</text>
+      <rect x="490" y="103" width="140" height="50" rx="7" fill="#0d3020" stroke="#00c9a7" stroke-width="1.5"/>
+      <text x="560" y="125" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">Origin Group 2</text>
+      <text x="560" y="142" text-anchor="middle" fill="#336655" font-size="9">West Europe App Service</text>
+      <rect x="490" y="155" width="140" height="50" rx="7" fill="#120d20" stroke="#7c5cfc" stroke-width="1.5"/>
+      <text x="560" y="177" text-anchor="middle" fill="#c4a6ff" font-size="11" font-weight="700">Storage Origin</text>
+      <text x="560" y="194" text-anchor="middle" fill="#5a4080" font-size="9">Static content / CDN cache</text>
+      <!-- Health check indicator -->
+      <text x="660" y="100" fill="#00c9a7" font-size="10">✅ Healthy</text>
+      <text x="660" y="148" fill="#00c9a7" font-size="10">✅ Healthy</text>
+      <text x="660" y="190" fill="#00c9a7" font-size="10">✅ Healthy</text>
+    </svg>
+  </div>
+
+  <h3 class="sh">Front Door SKUs</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Feature</th><th>Standard</th><th>Premium</th></tr>
+    <tr><td>CDN + caching</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Custom domains + SSL</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Global L7 LB</td><td>✅</td><td>✅</td></tr>
+    <tr><td>WAF managed rules</td><td>❌</td><td>✅ (Microsoft + OWASP)</td></tr>
+    <tr><td>Bot protection</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Private Link origins</td><td>❌</td><td>✅ (secure origins without public IPs)</td></tr>
+    <tr><td>Security reports</td><td>❌</td><td>✅</td></tr>
+  </table></div>
+
+  <h3 class="sh">When to Use Front Door vs Application Gateway</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Scenario</th><th>Use</th></tr>
+    <tr><td>Global multi-region web app with CDN</td><td>Azure Front Door</td></tr>
+    <tr><td>Single-region app with WAF + URL routing</td><td>Application Gateway WAF_v2</td></tr>
+    <tr><td>API backend in single region</td><td>Application Gateway or Internal LB</td></tr>
+    <tr><td>Global + regional protection</td><td>Front Door (global) + App Gateway (regional) — layered</td></tr>
+    <tr><td>Static website with global delivery</td><td>Front Door Premium with Storage origin</td></tr>
+  </table></div>
+</div>
+
+<!-- ═══ C18: TRAFFIC MANAGER ═══ -->
+<div class="chapter" id="c18">
+  <div class="ch-header"><div class="ch-num">18</div><h2 class="ch-title">Azure Traffic Manager</h2></div>
+  <p class="ch-desc">DNS-based global load balancing — routes users to the best endpoint based on routing method.</p>
+
+  <div class="callout">💡 <strong>Key difference:</strong> Traffic Manager works at <em>DNS level</em> — it returns the IP of the best endpoint. It does NOT proxy traffic (unlike Front Door). Traffic flows directly from client to endpoint.</div>
+
+  <h3 class="sh">Traffic Routing Methods</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Method</th><th>How It Works</th><th>Use Case</th></tr>
+    <tr><td><strong>Performance</strong></td><td>Routes to lowest-latency endpoint for the user</td><td>Global web app — users get nearest region</td></tr>
+    <tr><td><strong>Priority</strong></td><td>Route to primary; failover to secondary if unhealthy</td><td>Active/passive DR setup</td></tr>
+    <tr><td><strong>Weighted</strong></td><td>Distribute by weight percentage (100, 50/50, etc.)</td><td>Canary releases, gradual migrations</td></tr>
+    <tr><td><strong>Geographic</strong></td><td>Route by user's geographic location</td><td>Data sovereignty, region-specific content</td></tr>
+    <tr><td><strong>Multivalue</strong></td><td>Return all healthy IPv4/IPv6 endpoints</td><td>Client-side load balancing</td></tr>
+    <tr><td><strong>Subnet</strong></td><td>Map specific client IP subnets to specific endpoints</td><td>User segments, A/B testing by office IP</td></tr>
+  </table></div>
+
+  <h3 class="sh">Traffic Manager vs Front Door</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th></th><th>Traffic Manager</th><th>Front Door</th></tr>
+    <tr><td>Layer</td><td>DNS (no proxy)</td><td>L7 HTTP proxy at edge</td></tr>
+    <tr><td>Protocol support</td><td>Any (DNS-based)</td><td>HTTP/HTTPS only</td></tr>
+    <tr><td>SSL termination</td><td>❌ No</td><td>✅ Yes</td></tr>
+    <tr><td>WAF</td><td>❌ No</td><td>✅ Yes (Premium)</td></tr>
+    <tr><td>Caching/CDN</td><td>❌ No</td><td>✅ Yes</td></tr>
+    <tr><td>Latency</td><td>DNS TTL (slow failover)</td><td>Near-instant (anycast)</td></tr>
+  </table></div>
+</div>
+
+<!-- ═══ C19: VPN GATEWAY ═══ -->
+<div class="chapter" id="c19">
+  <div class="ch-header"><div class="ch-num">19</div><h2 class="ch-title">VPN Gateway — Site-to-Site & Point-to-Site</h2></div>
+  <p class="ch-desc">Encrypted hybrid connectivity between on-premises networks and Azure over the internet.</p>
+
+  <h3 class="sh">VPN Gateway Types</h3>
+  <div class="grid g3">
+    <div class="card blue"><h4>Site-to-Site (S2S)</h4><p>Permanent IPsec/IKE tunnel between on-prem VPN device and Azure VPN Gateway. Used for branch office connectivity.</p></div>
+    <div class="card teal"><h4>Point-to-Site (P2S)</h4><p>Individual client machines (laptops, PCs) connect securely to Azure VNet over VPN. Supports OpenVPN, SSTP, IKEv2.</p></div>
+    <div class="card purple"><h4>VNet-to-VNet</h4><p>Connect two Azure VNets via VPN (across regions or subscriptions). Alternative to VNet Peering when address spaces must remain isolated.</p></div>
+  </div>
+
+  <h3 class="sh">Site-to-Site Architecture</h3>
+  <div class="dbox">
+    <svg viewBox="0 0 740 220" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:740px">
+      <!-- On-prem -->
+      <rect x="20" y="60" width="200" height="100" rx="10" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="120" y="88" text-anchor="middle" fill="#4f8ef7" font-size="12" font-weight="700">🏢 On-Premises</text>
+      <text x="120" y="108" text-anchor="middle" fill="#4a6a8a" font-size="10">VPN Device (Cisco/Palo Alto)</text>
+      <text x="120" y="124" text-anchor="middle" fill="#4a6a8a" font-size="10">Public IP: 203.0.113.1</text>
+      <text x="120" y="140" text-anchor="middle" fill="#4a6a8a" font-size="10">Address: 192.168.0.0/16</text>
+      <!-- IPsec tunnel -->
+      <line x1="220" y1="110" x2="310" y2="110" stroke="#ffd54f" stroke-width="3" stroke-dasharray="8,4"/>
+      <text x="265" y="103" text-anchor="middle" fill="#ffd54f" font-size="10" font-weight="700">IPsec/IKEv2</text>
+      <text x="265" y="126" text-anchor="middle" fill="#ffd54f" font-size="9">Encrypted Tunnel</text>
+      <!-- VPN Gateway -->
+      <rect x="310" y="70" width="160" height="80" rx="10" fill="#120d20" stroke="#7c5cfc" stroke-width="2"/>
+      <text x="390" y="98" text-anchor="middle" fill="#c4a6ff" font-size="12" font-weight="700">🔒 VPN Gateway</text>
+      <text x="390" y="116" text-anchor="middle" fill="#5a4080" font-size="10">GatewaySubnet /27</text>
+      <text x="390" y="133" text-anchor="middle" fill="#5a4080" font-size="10">Active-Active or A/S</text>
+      <!-- Azure VNet -->
+      <rect x="490" y="40" width="230" height="140" rx="10" fill="#080e18" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="605" y="68" text-anchor="middle" fill="#4f8ef7" font-size="12" font-weight="700">☁ Azure VNet</text>
+      <text x="605" y="88" text-anchor="middle" fill="#4a6a8a" font-size="10">10.0.0.0/16</text>
+      <line x1="470" y1="110" x2="490" y2="110" stroke="#7c5cfc" stroke-width="2"/>
+      <rect x="510" y="100" width="90" height="36" rx="6" fill="#0a1828" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="555" y="118" text-anchor="middle" fill="#7ab8ff" font-size="10">🖥 VM-01</text>
+      <text x="555" y="131" text-anchor="middle" fill="#3a5070" font-size="9">10.0.1.4</text>
+      <rect x="615" y="100" width="90" height="36" rx="6" fill="#0a1828" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="660" y="118" text-anchor="middle" fill="#7ab8ff" font-size="10">🗄 VM-DB</text>
+      <text x="660" y="131" text-anchor="middle" fill="#3a5070" font-size="9">10.0.3.4</text>
+    </svg>
+  </div>
+
+  <h3 class="sh">VPN Gateway SKUs</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>SKU</th><th>Max S2S Tunnels</th><th>Aggregate Throughput</th><th>P2S Connections</th></tr>
+    <tr><td>Basic</td><td>10</td><td>100 Mbps</td><td>128</td></tr>
+    <tr><td>VpnGw1</td><td>30</td><td>650 Mbps</td><td>250</td></tr>
+    <tr><td>VpnGw2</td><td>30</td><td>1 Gbps</td><td>500</td></tr>
+    <tr><td>VpnGw3</td><td>30</td><td>1.25 Gbps</td><td>1000</td></tr>
+    <tr><td>VpnGw4</td><td>100</td><td>5 Gbps</td><td>5000</td></tr>
+    <tr><td>VpnGw5</td><td>100</td><td>10 Gbps</td><td>10000</td></tr>
+  </table></div>
+  <div class="callout orange">⚠️ Basic SKU doesn't support BGP, zone redundancy, or Active-Active. Don't use for production. VPN Gateway takes ~45 mins to provision.</div>
+
+  <h3 class="sh">BGP with VPN Gateway</h3>
+  <p>Enable BGP on VPN Gateway to dynamically exchange routes with on-prem. Without BGP, you use static routes (every network must be declared manually). BGP automatically propagates new subnets.</p>
+  <pre>VPN Gateway BGP ASN: 65515 (default Azure, can change)
+On-prem BGP ASN:     65000 (your choice)
+BGP peer IP (Azure): 10.0.255.254 (BGP peering address)</pre>
+
+  <h3 class="sh">Point-to-Site Authentication Options</h3>
+  <div class="grid g3">
+    <div class="card blue"><h4>Azure Certificate</h4><p>Root certificate uploaded to gateway. Client certificates issued and installed on each device. Common for managed devices.</p></div>
+    <div class="card teal"><h4>Azure AD / Entra ID</h4><p>Users authenticate with Azure AD credentials + MFA. Best for remote workers — no certificates needed per device.</p></div>
+    <div class="card purple"><h4>RADIUS</h4><p>Integrate with existing RADIUS server / NPS. Supports AD credentials, OTP, smart cards.</p></div>
+  </div>
+</div>
+
+<!-- ═══ C20: EXPRESSROUTE ═══ -->
+<div class="chapter" id="c20">
+  <div class="ch-header"><div class="ch-num">20</div><h2 class="ch-title">ExpressRoute</h2></div>
+  <p class="ch-desc">Dedicated private connectivity from on-premises to Azure — bypassing the public internet entirely.</p>
+
+  <div class="callout green">💡 <strong>Key difference from VPN:</strong> ExpressRoute uses a <em>dedicated private circuit</em> provided by a connectivity provider (Equinix, AT&T, BT, Tata, etc.). Traffic NEVER traverses the public internet. Guaranteed bandwidth, lower latency, higher SLA (99.95%).</div>
+
+  <h3 class="sh">ExpressRoute Architecture</h3>
+  <div class="dbox">
+    <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px">
+      <!-- On-prem -->
+      <rect x="10" y="80" width="160" height="120" rx="10" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="90" y="110" text-anchor="middle" fill="#4f8ef7" font-size="12" font-weight="700">🏢 On-Premises</text>
+      <text x="90" y="130" text-anchor="middle" fill="#4a6a8a" font-size="10">CE Router</text>
+      <text x="90" y="148" text-anchor="middle" fill="#4a6a8a" font-size="10">BGP ASN: 65000</text>
+      <text x="90" y="166" text-anchor="middle" fill="#4a6a8a" font-size="10">192.168.0.0/16</text>
+      <!-- MSEE -->
+      <line x1="170" y1="140" x2="230" y2="140" stroke="#ffd54f" stroke-width="2.5"/>
+      <rect x="230" y="90" width="160" height="100" rx="10" fill="#1a1500" stroke="#ffd54f" stroke-width="2"/>
+      <text x="310" y="118" text-anchor="middle" fill="#ffd54f" font-size="12" font-weight="700">Peering Location</text>
+      <text x="310" y="136" text-anchor="middle" fill="#7a6a30" font-size="10">Provider Edge (PE)</text>
+      <text x="310" y="153" text-anchor="middle" fill="#7a6a30" font-size="10">MSEE Routers</text>
+      <text x="310" y="170" text-anchor="middle" fill="#7a6a30" font-size="10">Primary + Secondary circuits</text>
+      <!-- ER Circuit -->
+      <line x1="390" y1="140" x2="450" y2="140" stroke="#ffd54f" stroke-width="2.5"/>
+      <text x="420" y="130" text-anchor="middle" fill="#ffd54f" font-size="10">Private/Dedicated</text>
+      <!-- Azure side -->
+      <rect x="450" y="60" width="290" height="160" rx="10" fill="#080e18" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="595" y="90" text-anchor="middle" fill="#4f8ef7" font-size="12" font-weight="700">☁ Azure</text>
+      <rect x="470" y="100" width="140" height="50" rx="7" fill="#120d20" stroke="#7c5cfc" stroke-width="1.5"/>
+      <text x="540" y="122" text-anchor="middle" fill="#c4a6ff" font-size="11" font-weight="700">ER Gateway</text>
+      <text x="540" y="139" text-anchor="middle" fill="#5a4080" font-size="9">GatewaySubnet /27</text>
+      <line x1="540" y1="150" x2="540" y2="180" stroke="#7c5cfc" stroke-width="1.5"/>
+      <rect x="470" y="180" width="260" height="30" rx="6" fill="#0a1828" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="600" y="200" text-anchor="middle" fill="#7ab8ff" font-size="10">VNet: 10.0.0.0/16 — VMs, PaaS services</text>
+      <!-- Peering types -->
+      <text x="650" y="110" text-anchor="middle" fill="#4fd1b8" font-size="9">Private Peering</text>
+      <text x="650" y="124" text-anchor="middle" fill="#4fd1b8" font-size="9">→ VNet access</text>
+      <text x="650" y="142" text-anchor="middle" fill="#ffb068" font-size="9">Microsoft Peering</text>
+      <text x="650" y="156" text-anchor="middle" fill="#ffb068" font-size="9">→ M365/PaaS</text>
+    </svg>
+  </div>
+
+  <h3 class="sh">Peering Types</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Peering Type</th><th>Accesses</th><th>BGP Community</th><th>Use Case</th></tr>
+    <tr><td>Private Peering</td><td>Azure VNets (VMs, ILBs)</td><td>ASN 12076</td><td>Hybrid cloud — on-prem to VMs/PaaS in VNet</td></tr>
+    <tr><td>Microsoft Peering</td><td>Azure PaaS public endpoints, Microsoft 365</td><td>Various regional communities</td><td>Office 365, Azure Storage public endpoints over private circuit</td></tr>
+  </table></div>
+
+  <h3 class="sh">ExpressRoute SKUs</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>SKU</th><th>Bandwidths</th><th>Notes</th></tr>
+    <tr><td>Local</td><td>1–10 Gbps</td><td>Unlimited data (egress free), but same Metro region only</td></tr>
+    <tr><td>Standard</td><td>50 Mbps – 10 Gbps</td><td>Access to Azure regions in geopolitical region</td></tr>
+    <tr><td>Premium</td><td>50 Mbps – 100 Gbps</td><td>Global reach — all Azure regions worldwide + more routes</td></tr>
+  </table></div>
+
+  <h3 class="sh">ExpressRoute vs VPN Gateway</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Feature</th><th>ExpressRoute</th><th>VPN Gateway</th></tr>
+    <tr><td>Path</td><td>Dedicated private circuit</td><td>Encrypted over internet</td></tr>
+    <tr><td>Bandwidth</td><td>50 Mbps – 100 Gbps</td><td>Up to 10 Gbps (VpnGw5)</td></tr>
+    <tr><td>Latency</td><td>Consistent, low</td><td>Variable (internet)</td></tr>
+    <tr><td>SLA</td><td>99.95%</td><td>99.9%</td></tr>
+    <tr><td>Cost</td><td>High (circuit + gateway)</td><td>Lower (gateway only)</td></tr>
+    <tr><td>Setup time</td><td>Weeks (provider provisioning)</td><td>~45 min</td></tr>
+    <tr><td>M365 access</td><td>✅ Via Microsoft Peering</td><td>❌</td></tr>
+    <tr><td>Internet backup</td><td>Use VPN as backup</td><td>Already uses internet</td></tr>
+  </table></div>
+
+  <h3 class="sh">ExpressRoute FastPath</h3>
+  <div class="callout purple">FastPath bypasses the ER Gateway for data-plane traffic — packets flow directly from the circuit to VNet VMs, skipping gateway processing. This achieves lower latency and higher throughput. Control plane (BGP) still goes through gateway. Requires UltraPerformance or ErGw3AZ gateway SKU.</div>
+
+  <h3 class="sh">ExpressRoute Global Reach</h3>
+  <p>Connect two on-premises sites to each other via Azure ExpressRoute backbone — without backhaul through Azure. Site A → ER circuit → MSEE → ER circuit → Site B. Pure private connectivity between offices using Azure as the backbone.</p>
+</div>
+
+<!-- ═══ C21: VNET PEERING ═══ -->
+<div class="chapter" id="c21">
+  <div class="ch-header"><div class="ch-num">21</div><h2 class="ch-title">VNet Peering</h2></div>
+  <p class="ch-desc">Low-latency, high-bandwidth private connectivity between VNets using Azure backbone.</p>
+
+  <div class="grid g2">
+    <div class="card blue"><h4>Regional VNet Peering</h4><p>Two VNets in the SAME Azure region. Traffic stays on Microsoft backbone, sub-millisecond latency. No gateway needed.</p></div>
+    <div class="card teal"><h4>Global VNet Peering</h4><p>Two VNets in DIFFERENT Azure regions. Also on Microsoft backbone. Small data transfer charge applies.</p></div>
+  </div>
+
+  <h3 class="sh">Peering Properties</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Setting</th><th>Default</th><th>Effect</th></tr>
+    <tr><td>Allow VNet access</td><td>Enabled</td><td>Enables traffic between the peered VNets</td></tr>
+    <tr><td>Allow forwarded traffic</td><td>Disabled</td><td>Allow traffic from beyond peered VNet (for hub-spoke via NVA)</td></tr>
+    <tr><td>Allow gateway transit</td><td>Disabled</td><td>Spoke can use hub's VPN/ER gateway (enable on hub side)</td></tr>
+    <tr><td>Use remote gateways</td><td>Disabled</td><td>Spoke uses hub gateway (enable on spoke side)</td></tr>
+  </table></div>
+
+  <div class="callout orange">⚠️ <strong>VNet Peering is NOT transitive.</strong> If VNet-A peers with VNet-B, and VNet-B peers with VNet-C, VNet-A CANNOT talk to VNet-C without a direct peering or via an NVA/Hub in VNet-B with forwarded traffic enabled.</div>
+
+  <h3 class="sh">Peering Requirements</h3>
+  <p>✅ No overlapping address spaces · ✅ Bidirectional (create peering on both VNets) · ✅ Works across subscriptions and tenants · ✅ No downtime when creating · ⚠️ Adding new address space to VNet breaks existing peerings (must re-sync)</p>
+</div>
+
+<!-- ═══ C22: VIRTUAL WAN ═══ -->
+<div class="chapter" id="c22">
+  <div class="ch-header"><div class="ch-num">22</div><h2 class="ch-title">Azure Virtual WAN (vWAN)</h2></div>
+  <p class="ch-desc">Microsoft-managed SD-WAN networking service for massive scale connectivity.</p>
+
+  <p>Azure Virtual WAN is a networking service that brings many networking, security, and routing functionalities together into a single operational interface. It replaces the complex manual hub-spoke model for large enterprises.</p>
+
+  <div class="grid g2">
+    <div class="card blue"><h4>Basic SKU</h4><p>Site-to-Site VPN only. Lower cost. Use for simple S2S connectivity without routing complexity.</p></div>
+    <div class="card teal"><h4>Standard SKU</h4><p>S2S VPN + P2S VPN + ExpressRoute + VNet connections + Azure Firewall integration (Secured Virtual Hub). Full routing capabilities.</p></div>
+  </div>
+
+  <h3 class="sh">Virtual WAN Components</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Component</th><th>Description</th></tr>
+    <tr><td>Virtual WAN</td><td>The top-level resource. Contains hubs and connections.</td></tr>
+    <tr><td>Virtual Hub</td><td>Microsoft-managed hub in an Azure region. Auto-scales. Routes all traffic between connected networks.</td></tr>
+    <tr><td>Hub VNet Connection</td><td>Connects spoke VNets to the hub (replaces peering).</td></tr>
+    <tr><td>VPN Site</td><td>Represents on-prem branch. Configured with IP, BGP ASN, device specs.</td></tr>
+    <tr><td>ExpressRoute Connection</td><td>Connects ER circuit to vWAN hub.</td></tr>
+    <tr><td>Secured Virtual Hub</td><td>Virtual Hub + Azure Firewall integrated. Enforces security policy for all traffic.</td></tr>
+  </table></div>
+
+  <h3 class="sh">vWAN vs Manual Hub-Spoke</h3>
+  <div class="vs">
+    <div class="vs-col left">
+      <h5>Manual Hub-Spoke</h5>
+      <p>You manage VNet peering, UDRs, NVA routing, BGP. Scales but gets complex. Full control. Works well up to ~50 spokes.</p>
+    </div>
+    <div class="vs-mid">VS</div>
+    <div class="vs-col right">
+      <h5>Azure Virtual WAN</h5>
+      <p>Microsoft manages routing, scaling, failover. Automatic route propagation. Better for 50+ sites/spokes. Less operational overhead.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ C23: HUB-SPOKE ═══ -->
+<div class="chapter" id="c23">
+  <div class="ch-header"><div class="ch-num">23</div><h2 class="ch-title">Hub-Spoke Architecture</h2></div>
+  <p class="ch-desc">The gold-standard enterprise Azure network topology — centralised security with isolated workloads.</p>
+
+  <h3 class="sh">Architecture Overview</h3>
+  <p>The <strong>Hub VNet</strong> contains shared services: Azure Firewall, VPN/ER Gateway, Bastion, DNS. <strong>Spoke VNets</strong> contain workloads. Spokes peer with the hub but NOT with each other. All inter-spoke traffic routes through the hub firewall.</p>
+
+  <div class="dbox">
+    <svg viewBox="0 0 760 500" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px">
+      <!-- On-prem -->
+      <rect x="10" y="210" width="120" height="80" rx="8" fill="#0a1828" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="70" y="243" text-anchor="middle" fill="#4f8ef7" font-size="11" font-weight="700">🏢 On-Prem</text>
+      <text x="70" y="262" text-anchor="middle" fill="#4a6a8a" font-size="9">192.168.0.0/16</text>
+      <text x="70" y="278" text-anchor="middle" fill="#4a6a8a" font-size="9">ER/VPN</text>
+      <!-- HUB VNET -->
+      <rect x="200" y="120" width="340" height="260" rx="14" fill="#0a0f1e" stroke="#ffd54f" stroke-width="2.5"/>
+      <text x="370" y="148" text-anchor="middle" fill="#ffd54f" font-size="14" font-weight="800">🏗 HUB VNet (10.0.0.0/16)</text>
+      <text x="370" y="165" text-anchor="middle" fill="#7a6a30" font-size="10">Shared Services — Centralised Security</text>
+      <!-- Firewall in Hub -->
+      <rect x="270" y="180" width="200" height="44" rx="8" fill="#1a1000" stroke="#f7934f" stroke-width="2"/>
+      <text x="370" y="198" text-anchor="middle" fill="#ffb068" font-size="12" font-weight="700">🔥 Azure Firewall</text>
+      <text x="370" y="214" text-anchor="middle" fill="#7a5030" font-size="10">All inter-spoke traffic flows here</text>
+      <!-- Gateway in Hub -->
+      <rect x="220" y="246" width="130" height="40" rx="7" fill="#120d20" stroke="#7c5cfc" stroke-width="1.5"/>
+      <text x="285" y="263" text-anchor="middle" fill="#c4a6ff" font-size="11" font-weight="700">🔒 VPN/ER GW</text>
+      <text x="285" y="278" text-anchor="middle" fill="#5a4080" font-size="9">GatewaySubnet</text>
+      <!-- Bastion in Hub -->
+      <rect x="390" y="246" width="120" height="40" rx="7" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
+      <text x="450" y="263" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">🛡 Bastion</text>
+      <text x="450" y="278" text-anchor="middle" fill="#336655" font-size="9">Secure SSH/RDP</text>
+      <!-- DNS in Hub -->
+      <rect x="260" y="310" width="220" height="36" rx="7" fill="#0a1828" stroke="#4f8ef7" stroke-width="1"/>
+      <text x="370" y="333" text-anchor="middle" fill="#7ab8ff" font-size="11">🗣 Private DNS + DNS Forwarder</text>
+
+      <!-- Spoke VNets -->
+      <!-- Spoke 1 - top -->
+      <rect x="230" y="30" width="190" height="70" rx="10" fill="#0d2d1a" stroke="#00c9a7" stroke-width="1.5"/>
+      <text x="325" y="56" text-anchor="middle" fill="#4fd1b8" font-size="11" font-weight="700">🌿 Spoke 1: Production</text>
+      <text x="325" y="72" text-anchor="middle" fill="#336655" font-size="9">10.1.0.0/16 · Web + App + DB</text>
+      <text x="325" y="86" text-anchor="middle" fill="#336655" font-size="9">UDR: 0.0.0.0/0 → Firewall</text>
+      <line x1="325" y1="100" x2="325" y2="120" stroke="#00c9a7" stroke-width="2" stroke-dasharray="5,3"/>
+      <!-- Peering labels -->
+      <text x="345" y="113" fill="#00c9a7" font-size="9">Peering</text>
+
+      <!-- Spoke 2 - right -->
+      <rect x="570" y="170" width="170" height="70" rx="10" fill="#1e1000" stroke="#f7934f" stroke-width="1.5"/>
+      <text x="655" y="196" text-anchor="middle" fill="#ffb068" font-size="11" font-weight="700">🌿 Spoke 2: Dev</text>
+      <text x="655" y="212" text-anchor="middle" fill="#7a5030" font-size="9">10.2.0.0/16</text>
+      <text x="655" y="226" text-anchor="middle" fill="#7a5030" font-size="9">UDR → Firewall</text>
+      <line x1="570" y1="205" x2="540" y2="205" stroke="#f7934f" stroke-width="2" stroke-dasharray="5,3"/>
+
+      <!-- Spoke 3 - bottom -->
+      <rect x="230" y="410" width="190" height="70" rx="10" fill="#120d20" stroke="#7c5cfc" stroke-width="1.5"/>
+      <text x="325" y="436" text-anchor="middle" fill="#c4a6ff" font-size="11" font-weight="700">🌿 Spoke 3: Shared Svcs</text>
+      <text x="325" y="452" text-anchor="middle" fill="#5a4080" font-size="9">10.3.0.0/16 · AD DS, Monitoring</text>
+      <text x="325" y="466" text-anchor="middle" fill="#5a4080" font-size="9">UDR → Firewall</text>
+      <line x1="325" y1="410" x2="325" y2="380" stroke="#7c5cfc" stroke-width="2" stroke-dasharray="5,3"/>
+
+      <!-- On-prem to gateway line -->
+      <line x1="130" y1="248" x2="220" y2="265" stroke="#4f8ef7" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+      <!-- Traffic flow annotation -->
+      <rect x="10" y="410" width="170" height="80" rx="8" fill="#0a0c14" stroke="#2e3260" stroke-width="1"/>
+      <text x="95" y="432" text-anchor="middle" fill="#4a5080" font-size="11" font-weight="700">Traffic Flow</text>
+      <text x="95" y="450" text-anchor="middle" fill="#4a5080" font-size="10">Spoke1 → Firewall → Spoke2</text>
+      <text x="95" y="467" text-anchor="middle" fill="#4a5080" font-size="10">On-prem → GW → Firewall</text>
+      <text x="95" y="484" text-anchor="middle" fill="#4a5080" font-size="10">→ Spoke VMs</text>
+    </svg>
+  </div>
+
+  <h3 class="sh">Hub-Spoke Implementation Steps</h3>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="sb2"><h5>Create Hub VNet</h5><p>Address: <code>10.0.0.0/16</code> · Add: GatewaySubnet (/27), AzureFirewallSubnet (/26), AzureBastionSubnet (/26), snet-dns (/28)</p></div></div>
+    <div class="step"><div class="sn">2</div><div class="sb2"><h5>Deploy Azure Firewall in Hub</h5><p>Create Firewall → Assign to AzureFirewallSubnet → Note private IP (e.g., 10.0.1.4)</p></div></div>
+    <div class="step"><div class="sn">3</div><div class="sb2"><h5>Deploy VPN/ER Gateway in Hub</h5><p>Create Gateway → GatewaySubnet → configure on-prem connection</p></div></div>
+    <div class="step"><div class="sn">4</div><div class="sb2"><h5>Create Spoke VNets and Peer to Hub</h5><p>For each spoke: Create VNet → Peer to hub → Enable "Allow forwarded traffic" on spoke side → Enable "Gateway transit" on hub, "Use remote gateways" on spoke</p></div></div>
+    <div class="step"><div class="sn">5</div><div class="sb2"><h5>Create UDRs in Spokes</h5><p>Route Table per spoke → Add: <code>0.0.0.0/0</code> → Virtual Appliance → Firewall private IP → Associate with spoke subnets</p></div></div>
+    <div class="step"><div class="sn">6</div><div class="sb2"><h5>Configure Firewall Rules</h5><p>Allow spoke-to-spoke as needed · Allow spoke-to-internet FQDNs · Deny all else by default</p></div></div>
+  </div>
+</div>
+
+<!-- ═══ C24: BASTION ═══ -->
+<div class="chapter" id="c24">
+  <div class="ch-header"><div class="ch-num">24</div><h2 class="ch-title">Azure Bastion</h2></div>
+  <p class="ch-desc">Fully managed, secure RDP/SSH access to VMs without public IPs or open inbound ports.</p>
+
+  <p>Azure Bastion deploys in your VNet and provides browser-based (HTML5) RDP and SSH to VMs. No need to expose VMs to the internet on port 22 or 3389.</p>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>SKU</th><th>Features</th><th>Sessions</th></tr>
+    <tr><td>Basic</td><td>Browser-based RDP/SSH, shareable links</td><td>2 per host</td></tr>
+    <tr><td>Standard</td><td>All Basic + native client support, IP-based connection, tunneling, Kerberos auth, VM audio, file upload/download</td><td>Up to 50 per host unit</td></tr>
+    <tr><td>Premium</td><td>All Standard + session recording, private-only Bastion (no public IP)</td><td>Up to 50 per host unit</td></tr>
+  </table></div>
+
+  <div class="callout green">✅ <strong>Security Best Practice:</strong> Never open RDP (3389) or SSH (22) inbound from internet in NSGs. Use Bastion instead. This is a common AZ-700 scenario question.</div>
+
+  <h3 class="sh">Bastion Architecture</h3>
+  <pre>User Browser → HTTPS:443 → Azure Portal/Bastion URL
+  → Azure Bastion (in AzureBastionSubnet)
+  → RDP/SSH to VM private IP (within VNet)
+  → Session displayed in browser via HTML5
+No public IP on VM required. VM NSG: only allow from AzureBastionSubnet.</pre>
+</div>
+
+<!-- ═══ C25: NAT GATEWAY ═══ -->
+<div class="chapter" id="c25">
+  <div class="ch-header"><div class="ch-num">25</div><h2 class="ch-title">Azure NAT Gateway</h2></div>
+  <p class="ch-desc">Managed outbound-only NAT for predictable, scalable internet egress from private subnets.</p>
+
+  <div class="grid g2">
+    <div class="card blue"><h4>Why NAT Gateway?</h4><p>VMs without public IPs need outbound internet. Default outbound SNAT via Load Balancer has limited SNAT ports (1024/VM). NAT Gateway provides up to 64,512 SNAT ports per public IP and supports up to 16 public IPs.</p></div>
+    <div class="card teal"><h4>Key Features</h4><p>Outbound only (no inbound) · Zone-redundant · 64,512 ports per IP · Up to 16 public IPs → 1M+ SNAT ports total · Replaces SNAT on Load Balancer for outbound</p></div>
+  </div>
+
+  <h3 class="sh">SNAT Port Exhaustion — Scenario</h3>
+  <div class="scenario">
+    <div class="sc-title">⚠️ Problem: SNAT Port Exhaustion on Load Balancer</div>
+    <p>100 VMs behind a Standard LB with one public IP. Each VM gets ~1024 SNAT ports. Under heavy outbound load, connections start failing with connection timeout errors.</p>
+    <div class="solution">
+      <h6>Solution</h6>
+      <p>1. Create NAT Gateway → assign 2 Public IPs (128,000 SNAT ports total)<br>
+      2. Associate NAT Gateway with the subnet<br>
+      3. NAT Gateway takes precedence over LB outbound rules for that subnet<br>
+      4. Each outbound flow gets a unique SNAT port from the large pool</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ C26: DDOS ═══ -->
+<div class="chapter" id="c26">
+  <div class="ch-header"><div class="ch-num">26</div><h2 class="ch-title">Azure DDoS Protection</h2></div>
+  <p class="ch-desc">Protection against Distributed Denial of Service attacks on Azure resources.</p>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>Feature</th><th>Network Protection (Basic/Infrastructure)</th><th>IP Protection</th><th>Network Protection (Standard)</th></tr>
+    <tr><td>Cost</td><td>Free — included for all Azure</td><td>Per protected IP</td><td>Per VNet ($$$)</td></tr>
+    <tr><td>Always-on monitoring</td><td>✅</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Adaptive tuning</td><td>❌</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Attack analytics</td><td>❌</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Cost protection</td><td>❌</td><td>❌</td><td>✅ (Azure credits for scale-out during attack)</td></tr>
+    <tr><td>Rapid response team</td><td>❌</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Scope</td><td>All Azure public IPs</td><td>Per specific public IP</td><td>All public IPs in VNet</td></tr>
+  </table></div>
+
+  <div class="callout orange">⚠️ DDoS Protection Network Standard applies to all public IPs in the VNet including Load Balancer, App Gateway, Firewall, Bastion. It does NOT protect non-Azure endpoints.</div>
+</div>
+
+<!-- ═══ C27: NETWORK WATCHER ═══ -->
+<div class="chapter" id="c27">
+  <div class="ch-header"><div class="ch-num">27</div><h2 class="ch-title">Azure Network Watcher — Monitoring & Diagnostics</h2></div>
+  <p class="ch-desc">Suite of tools to monitor, diagnose, and gain insights into your Azure network.</p>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>Tool</th><th>Purpose</th><th>How to Use</th></tr>
+    <tr><td><strong>IP Flow Verify</strong></td><td>Check if NSG allows/denies a specific flow</td><td>Provide: VM, direction, protocol, local/remote IP+port → Get: Allow/Deny + rule name</td></tr>
+    <tr><td><strong>Next Hop</strong></td><td>Find the next hop for a given packet</td><td>Source VM + Dest IP → Returns: next hop type (Internet, VirtualAppliance, etc.) and IP</td></tr>
+    <tr><td><strong>Connection Troubleshoot</strong></td><td>Test TCP/ICMP connectivity between two points</td><td>Source (VM/IP) → Destination (VM/IP/FQDN) + port → Pass/Fail + latency + hops</td></tr>
+    <tr><td><strong>NSG Flow Logs</strong></td><td>Log all allowed/denied flows through NSGs</td><td>Enable on NSG → writes to Storage Account → analyse with Traffic Analytics in Log Analytics</td></tr>
+    <tr><td><strong>Packet Capture</strong></td><td>Capture packets at VM NIC level</td><td>Start capture on VM → stores .cap file in Storage → analyse with Wireshark</td></tr>
+    <tr><td><strong>Connection Monitor</strong></td><td>Continuous end-to-end connectivity monitoring</td><td>Create test groups: source agents → test configs (protocol/port) → destinations → alerts on failure</td></tr>
+    <tr><td><strong>VPN Diagnostics</strong></td><td>Diagnose VPN gateway and connection issues</td><td>Select gateway/connection → run diagnostics → get log (stored in storage blob)</td></tr>
+    <tr><td><strong>Topology</strong></td><td>Visualise network topology</td><td>Select subscription + RG → renders visual map of VNets, subnets, VMs, NSGs, gateways</td></tr>
+  </table></div>
+
+  <h3 class="sh">NSG Flow Logs + Traffic Analytics</h3>
+  <pre>NSG Flow Log (raw data) → Storage Account → Log Analytics Workspace
+                                              → Traffic Analytics (workbook)
+                                                 - Top talkers
+                                                 - Geo-map of flows
+                                                 - Allowed vs denied flows
+                                                 - Malicious IPs detected</pre>
+</div>
+
+<!-- ═══ C28: TROUBLESHOOTING ═══ -->
+<div class="chapter" id="c28">
+  <div class="ch-header"><div class="ch-num">28</div><h2 class="ch-title">Troubleshooting Scenarios</h2></div>
+  <p class="ch-desc">Real-world scenarios with step-by-step diagnosis and resolution.</p>
+
+  <details><summary>🔴 Scenario 1: VM cannot reach the internet</summary>
+  <div class="acc-body">
+    <p><strong>Symptoms:</strong> VM can ping other VMs in VNet, but curl/ping to 8.8.8.8 fails.</p>
+    <h5 style="color:var(--teal);margin:12px 0 6px">Diagnosis Steps:</h5>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div class="sb2"><h5>Check NSG outbound rules</h5><p>Network Watcher → IP Flow Verify: Source=VM IP, Direction=Outbound, Dest=8.8.8.8:80. If Deny → find blocking rule name → fix NSG.</p></div></div>
+      <div class="step"><div class="sn">2</div><div class="sb2"><h5>Check Route Table (UDR)</h5><p>Network Watcher → Next Hop: Source VM, Dest=8.8.8.8. If Next Hop = None or wrong VirtualAppliance → UDR issue.</p></div></div>
+      <div class="step"><div class="sn">3</div><div class="sb2"><h5>Check if UDR forces to Firewall</h5><p>If traffic goes through Azure Firewall, check Firewall application/network rules. Firewall may be blocking without an allow rule for 0.0.0.0/0.</p></div></div>
+      <div class="step"><div class="sn">4</div><div class="sb2"><h5>Check NAT Gateway / Public IP</h5><p>If VM has no public IP and no Load Balancer and no NAT Gateway → no outbound SNAT. Add NAT Gateway to subnet.</p></div></div>
+    </div>
+  </div></details>
+
+  <details><summary>🔴 Scenario 2: On-prem cannot reach Azure VM over VPN</summary>
+  <div class="acc-body">
+    <p><strong>Symptoms:</strong> VPN tunnel shows "Connected" in Azure portal, but pinging Azure VM from on-prem fails.</p>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div class="sb2"><h5>Verify tunnel is connected</h5><p>Portal → VPN Gateway → Connections → Status should be "Connected". If "Not connected" → check IKE/IPsec parameters match on-prem VPN device.</p></div></div>
+      <div class="step"><div class="sn">2</div><div class="sb2"><h5>Check Local Network Gateway (LNG)</h5><p>LNG address space must include ALL on-prem subnets trying to reach Azure. If on-prem has 192.168.10.0/24 not listed → add it.</p></div></div>
+      <div class="step"><div class="sn">3</div><div class="sb2"><h5>Check Azure VM NSG</h5><p>NSG on VM NIC or subnet: Inbound rule must allow traffic from on-prem subnet (192.168.0.0/16) on required ports.</p></div></div>
+      <div class="step"><div class="sn">4</div><div class="sb2"><h5>Check Azure VNet address space in LNG</h5><p>LNG on Azure side must have the correct on-prem address prefix. Also check on-prem device has a route for Azure VNet (10.0.0.0/16) pointing to tunnel.</p></div></div>
+      <div class="step"><div class="sn">5</div><div class="sb2"><h5>Check UDR</h5><p>If subnet has UDR, ensure it doesn't accidentally override the VPN route. Routes to on-prem prefixes must point to VirtualNetworkGateway, not a NVA.</p></div></div>
+    </div>
+  </div></details>
+
+  <details><summary>🔴 Scenario 3: Private Endpoint — VM cannot resolve PaaS FQDN to private IP</summary>
+  <div class="acc-body">
+    <p><strong>Symptoms:</strong> Private Endpoint created for Storage Account, but nslookup still returns public IP.</p>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div class="sb2"><h5>Check Private DNS Zone exists</h5><p>Private DNS Zone must be <code>privatelink.blob.core.windows.net</code> (exact name). Zone must have an A record mapping to PE private IP.</p></div></div>
+      <div class="step"><div class="sn">2</div><div class="sb2"><h5>Check VNet Link</h5><p>Private DNS Zone → Virtual Network Links → VNet must be linked. Auto-registration can be off — it only matters for VM hostnames, not PE records.</p></div></div>
+      <div class="step"><div class="sn">3</div><div class="sb2"><h5>Verify A record in zone</h5><p>Private DNS Zone → Record Sets → Should see A record: <code>mystorageacct</code> → PE private IP (10.0.5.4). If missing, was created manually? Or "Integrate with private DNS zone" not selected during PE creation?</p></div></div>
+      <div class="step"><div class="sn">4</div><div class="sb2"><h5>Test resolution</h5><p>From VM: <code>nslookup mystorageacct.blob.core.windows.net</code>. If returns public IP → DNS not linked. If returns 10.x.x.x → working. Also check NSG on PE subnet allows traffic.</p></div></div>
+    </div>
+  </div></details>
+
+  <details><summary>🔴 Scenario 4: Hub-Spoke — Spoke VMs cannot communicate with each other</summary>
+  <div class="acc-body">
+    <p><strong>Symptoms:</strong> Spoke1-VM and Spoke2-VM both peer with hub, but cannot ping each other.</p>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div class="sb2"><h5>Check Peering settings</h5><p>Hub-Spoke1 peering: "Allow forwarded traffic" = ON on hub side. Spoke1-Hub peering: same ON. Same for Spoke2.</p></div></div>
+      <div class="step"><div class="sn">2</div><div class="sb2"><h5>Check UDR on Spokes</h5><p>Spoke1 UDR: route for Spoke2 prefix (10.2.0.0/16) → Next Hop: Virtual Appliance → Firewall IP (10.0.1.4). Same on Spoke2 for Spoke1 prefix.</p></div></div>
+      <div class="step"><div class="sn">3</div><div class="sb2"><h5>Check Firewall rules</h5><p>Azure Firewall Network Rules: Allow source=10.1.0.0/16, dest=10.2.0.0/16, any port → Allow. Without this rule, firewall drops inter-spoke traffic.</p></div></div>
+      <div class="step"><div class="sn">4</div><div class="sb2"><h5>Check Spoke NSGs</h5><p>Spoke1 subnet NSG: Allow inbound from 10.2.0.0/16. Spoke2 same. Without this, traffic reaches VM subnet but is blocked by NSG.</p></div></div>
+    </div>
+  </div></details>
+
+  <details><summary>🔴 Scenario 5: App Gateway returns 502 Bad Gateway</summary>
+  <div class="acc-body">
+    <p><strong>Symptoms:</strong> Application Gateway frontend responds with 502 to all requests.</p>
+    <div class="steps">
+      <div class="step"><div class="sn">1</div><div class="sb2"><h5>Check backend health</h5><p>App Gateway → Backend Health → shows each backend VM health status. Unhealthy = red. Check specific error (TCP timeout, HTTP 400, etc.).</p></div></div>
+      <div class="step"><div class="sn">2</div><div class="sb2"><h5>NSG on backend subnet</h5><p>NSG must allow: source = GatewayManager (service tag) on port 65200-65535 (management). Also allow App Gateway subnet IP range on backend port (80/443).</p></div></div>
+      <div class="step"><div class="sn">3</div><div class="sb2"><h5>Health probe misconfiguration</h5><p>Custom probe: path, port, protocol must match what the backend serves. If backend serves HTTP but probe uses HTTPS → probe fails → 502.</p></div></div>
+      <div class="step"><div class="sn">4</div><div class="sb2"><h5>Backend not listening</h5><p>SSH/RDP into backend VM. Verify web server is running: <code>sudo systemctl status nginx</code> or <code>netstat -tlnp</code>. Verify it listens on correct port.</p></div></div>
+    </div>
+  </div></details>
+</div>
+
+<!-- ═══ C29: DEPLOY VMs ═══ -->
+<div class="chapter" id="c29">
+  <div class="ch-header"><div class="ch-num">29</div><h2 class="ch-title">Deploy VMs in Azure Network — Full Walkthrough</h2></div>
+  <p class="ch-desc">Complete step-by-step deployment of a 3-tier application in an Azure VNet.</p>
+
+  <h3 class="sh">Architecture Goal</h3>
+  <div class="callout">Deploy a 3-tier app: Load Balancer → 2x Web VMs (snet-web) → Internal LB → 2x App VMs (snet-app) → SQL VM (snet-db), all within <code>vnet-prod (10.0.0.0/16)</code>, with NSGs and Azure Bastion for management.</div>
+
+  <h3 class="sh">Step 1: Create Resource Group & VNet</h3>
+  <pre>az group create --name rg-prod --location eastus
+
+az network vnet create \
+  --name vnet-prod \
+  --resource-group rg-prod \
+  --address-prefix 10.0.0.0/16 \
+  --location eastus</pre>
+
+  <h3 class="sh">Step 2: Create Subnets</h3>
+  <pre>az network vnet subnet create --name AzureBastionSubnet \
+  --vnet-name vnet-prod --resource-group rg-prod --address-prefix 10.0.0.0/26
+
+az network vnet subnet create --name snet-web \
+  --vnet-name vnet-prod --resource-group rg-prod --address-prefix 10.0.1.0/24
+
+az network vnet subnet create --name snet-app \
+  --vnet-name vnet-prod --resource-group rg-prod --address-prefix 10.0.2.0/24
+
+az network vnet subnet create --name snet-db \
+  --vnet-name vnet-prod --resource-group rg-prod --address-prefix 10.0.3.0/24</pre>
+
+  <h3 class="sh">Step 3: Create NSGs</h3>
+  <pre><span class="c"># Web NSG — allow HTTP/HTTPS from internet, deny all else inbound</span>
+az network nsg create --name nsg-web --resource-group rg-prod
+az network nsg rule create --nsg-name nsg-web -g rg-prod \
+  --name AllowHTTP --priority 100 --direction Inbound \
+  --source-address-prefixes Internet --destination-port-ranges 80 443 \
+  --protocol Tcp --access Allow
+
+<span class="c"># App NSG — allow 8080 only from web subnet</span>
+az network nsg create --name nsg-app --resource-group rg-prod
+az network nsg rule create --nsg-name nsg-app -g rg-prod \
+  --name AllowFromWeb --priority 100 --direction Inbound \
+  --source-address-prefixes 10.0.1.0/24 --destination-port-ranges 8080 \
+  --protocol Tcp --access Allow
+
+<span class="c"># Associate NSGs</span>
+az network vnet subnet update --name snet-web --vnet-name vnet-prod \
+  -g rg-prod --network-security-group nsg-web
+az network vnet subnet update --name snet-app --vnet-name vnet-prod \
+  -g rg-prod --network-security-group nsg-app</pre>
+
+  <h3 class="sh">Step 4: Deploy Web VMs</h3>
+  <pre><span class="c"># Create VM (no public IP — will use Bastion)</span>
+az vm create \
+  --resource-group rg-prod \
+  --name vm-web01 \
+  --image Ubuntu2204 \
+  --size Standard_B2s \
+  --vnet-name vnet-prod \
+  --subnet snet-web \
+  --public-ip-address "" \
+  --nsg "" \
+  --admin-username azureuser \
+  --generate-ssh-keys
+
+<span class="c"># Repeat for vm-web02 (same subnet, gets 10.0.1.5)</span></pre>
+
+  <h3 class="sh">Step 5: Create Public Load Balancer (Web Tier)</h3>
+  <pre>az network lb create --name lb-web --resource-group rg-prod \
+  --sku Standard --location eastus \
+  --frontend-ip-name fe-web --public-ip-address pip-lb-web
+
+az network lb address-pool create --lb-name lb-web -g rg-prod \
+  --name be-web
+
+az network lb probe create --lb-name lb-web -g rg-prod \
+  --name hp-http --protocol Http --port 80 --path /health
+
+az network lb rule create --lb-name lb-web -g rg-prod \
+  --name rule-http --protocol Tcp --frontend-port 80 --backend-port 80 \
+  --frontend-ip-name fe-web --backend-pool-name be-web \
+  --probe-name hp-http
+
+<span class="c"># Add VMs to backend pool via NIC</span>
+az network nic ip-config address-pool add \
+  --nic-name vm-web01VMNic --ip-config-name ipconfig1 \
+  -g rg-prod --lb-name lb-web --address-pool be-web</pre>
+
+  <h3 class="sh">Step 6: Deploy Azure Bastion</h3>
+  <pre>az network public-ip create --name pip-bastion --resource-group rg-prod \
+  --sku Standard --location eastus --allocation-method Static
+
+az network bastion create --name bastion-prod --resource-group rg-prod \
+  --vnet-name vnet-prod --public-ip-address pip-bastion \
+  --location eastus --sku Standard</pre>
+
+  <h3 class="sh">Final Architecture — IP Assignment Table</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Resource</th><th>Subnet</th><th>Private IP</th><th>Public IP</th><th>NSG</th></tr>
+    <tr><td>vm-web01</td><td>snet-web (10.0.1.0/24)</td><td>10.0.1.4</td><td>None (Bastion)</td><td>nsg-web</td></tr>
+    <tr><td>vm-web02</td><td>snet-web (10.0.1.0/24)</td><td>10.0.1.5</td><td>None (Bastion)</td><td>nsg-web</td></tr>
+    <tr><td>lb-web (frontend)</td><td>snet-web</td><td>—</td><td>40.x.x.x (public)</td><td>—</td></tr>
+    <tr><td>vm-app01</td><td>snet-app (10.0.2.0/24)</td><td>10.0.2.4</td><td>None</td><td>nsg-app</td></tr>
+    <tr><td>vm-app02</td><td>snet-app (10.0.2.0/24)</td><td>10.0.2.5</td><td>None</td><td>nsg-app</td></tr>
+    <tr><td>lb-internal (frontend)</td><td>snet-app</td><td>10.0.2.100 (static)</td><td>None</td><td>—</td></tr>
+    <tr><td>vm-sql01</td><td>snet-db (10.0.3.0/24)</td><td>10.0.3.4</td><td>None</td><td>nsg-db</td></tr>
+    <tr><td>Bastion</td><td>AzureBastionSubnet</td><td>10.0.0.5</td><td>pip-bastion</td><td>Auto NSG</td></tr>
+    <tr><td>Azure reserved</td><td>Each subnet</td><td>.0 .1 .2 .3 .255</td><td>—</td><td>—</td></tr>
+  </table></div>
+
+  <div class="callout green">✅ <strong>You now have a production-grade 3-tier Azure network:</strong> Internet → Standard Public LB → Web VMs (no public IPs) → Internal LB → App VMs → SQL VM, all protected by NSGs, manageable via Bastion, no internet-exposed SSH/RDP ports.</div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function go(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+  document.querySelector(`.sb-link[onclick="go('${id}')"]`)?.classList.add('active');
+}
+
+// Active link on scroll
+const chapters=document.querySelectorAll('.chapter');
+const links=document.querySelectorAll('.sb-link');
+const obs=new IntersectionObserver(e=>{
+  e.forEach(en=>{
+    if(en.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const id=en.target.id;
+      document.querySelector(`.sb-link[onclick="go('${id}')"]`)?.classList.add('active');
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+chapters.forEach(c=>obs.observe(c));
+
+// Search
+function doSearch(q){
+  if(!q){chapters.forEach(c=>c.style.opacity='1');return}
+  const qL=q.toLowerCase();
+  chapters.forEach(c=>{
+    const t=c.innerText.toLowerCase();
+    c.style.opacity=t.includes(qL)?'1':'0.2';
+  });
+}
 </script>
 </body>
 </html>
